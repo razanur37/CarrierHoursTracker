@@ -11,10 +11,19 @@
         android:id="@+id/tv_start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
         android:text="@string/start_time"
         android:textSize="24sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/et_start_time"
+        app:layout_constraintStart_toStartOf="@+id/tv_label_date" />
+
+    <TextView
+        android:id="@+id/tv_label_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:text="@string/date"
+        android:textSize="24sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_date"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -104,10 +113,9 @@
 
     <EditText
         android:id="@+id/et_start_time"
-        android:layout_width="64dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="64dp"
+        android:layout_marginTop="16dp"
         android:digits="0123456789."
         android:ems="10"
         android:hint="@string/start"
@@ -116,12 +124,12 @@
         android:inputType="numberDecimal"
         android:maxLength="5"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/et_date"
+        app:layout_constraintTop_toBottomOf="@+id/et_date" />
 
     <EditText
         android:id="@+id/et_end_time"
-        android:layout_width="64dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:digits="0123456789."
@@ -131,6 +139,7 @@
         android:importantForAutofill="no"
         android:inputType="numberDecimal"
         android:maxLength="5"
+        android:singleLine="true"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/et_start_time"
         app:layout_constraintTop_toBottomOf="@+id/et_start_time" />
@@ -139,12 +148,39 @@
         android:id="@+id/button_calculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:onClick="setTotals"
         android:text="@string/calculate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_label_penalty_hours_worked" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/date_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintTop_toBottomOf="@+id/button_calculate" />
+
+    <EditText
+        android:id="@+id/et_date"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="64dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:ems="10"
+        android:hint="@string/date"
+        android:importantForAutofill="no"
+        android:editable="false"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
