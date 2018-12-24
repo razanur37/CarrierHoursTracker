@@ -1,67 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:layout_editor_absoluteY="81dp">
 
     <TextView
         android:id="@+id/tv_item_date"
-        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:fontFamily="monospace"
         android:textSize="24sp"
-        tools:text="#24" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_item_start"
-        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|start"
+        android:layout_marginStart="16dp"
         android:fontFamily="monospace"
-        android:paddingTop="32dp"
         android:text="@string/start"
         android:textSize="18sp"
-        tools:text="#18" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_end"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_item_start_time"
-        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|start"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="monospace"
-        android:paddingLeft="64dp"
-        android:paddingTop="32dp"
-        android:text="07.00"
         android:textSize="18sp"
-        tools:text="#18" />
+        app:layout_constraintStart_toEndOf="@+id/tv_item_start"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
 
     <TextView
         android:id="@+id/tv_item_end"
-        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|end"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="monospace"
-        android:paddingTop="32dp"
-        android:paddingRight="64dp"
         android:text="@string/end"
         android:textSize="18sp"
-        tools:text="#18" />
+        app:layout_constraintEnd_toStartOf="@+id/tv_item_end_time"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
 
     <TextView
         android:id="@+id/tv_item_end_time"
-        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|end"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:fontFamily="monospace"
-        android:paddingTop="32dp"
-        android:text="20.00"
         android:textSize="18sp"
-        tools:text="#18" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
 
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

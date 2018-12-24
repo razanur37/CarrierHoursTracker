@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter dateRecyclerAdapter;
     private RecyclerView.LayoutManager dateRecyclerManager;
 
-    ArrayList<String> dateSet = new ArrayList<>();
+    ArrayList<Day> daysList = new ArrayList<>();
 
     final Calendar myCalendar = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener dateListener;
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         dateRecyclerManager = new LinearLayoutManager(this);
         dateRecyclerView.setLayoutManager(dateRecyclerManager);
 
-        dateRecyclerAdapter = new DateAdapter(dateSet);
+        dateRecyclerAdapter = new DateAdapter(daysList);
         dateRecyclerView.setAdapter(dateRecyclerAdapter);
     }
 
@@ -130,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
         straightHours.setText(String.format(locale, stringFormat, day.getStraightTime()));
         overtimeHours.setText(String.format(locale, stringFormat, day.getOvertime()));
         penaltyHours.setText(String.format(locale, stringFormat, day.getPenalty()));
-        dateSet.add(day.getDate());
+        daysList.add(day);
 
-        ((DateAdapter) dateRecyclerAdapter).updateList(dateSet);
+        ((DateAdapter) dateRecyclerAdapter).updateList(daysList);
     }
 
 

@@ -8,42 +8,51 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder> {
-    public ArrayList<String> dateSet;
+    private ArrayList<Day> daysList;
 
-    public static class DateViewHolder extends RecyclerView.ViewHolder {
-        public TextView date;
-        public DateViewHolder(View v) {
+    static class DateViewHolder extends RecyclerView.ViewHolder {
+        TextView date;
+        TextView startTime;
+        TextView endTime;
+        DateViewHolder(View v) {
             super(v);
             date = v.findViewById(R.id.tv_item_date);
+            startTime = v.findViewById(R.id.tv_item_start_time);
+            endTime = v.findViewById(R.id.tv_item_end_time);
         }
     }
 
-    public DateAdapter(ArrayList<String> dates) {
-        dateSet = dates;
+    DateAdapter(ArrayList<Day> days) {
+        daysList = days;
     }
 
     @NonNull
     @Override
     public DateAdapter.DateViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v =LayoutInflater.from(parent.getContext()).inflate(R.layout.date_list_item, parent, false);
-        DateViewHolder vh = new DateViewHolder(v);
-        return vh;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.date_list_item, parent, false);
+        return new DateViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(DateViewHolder holder, int position) {
-        holder.date.setText(dateSet.get(position));
+        String format = "%.2f";
+        Locale locale = Locale.US;
+
+        holder.date.setText(daysList.get(position).getDate());
+        holder.startTime.setText(String.format(locale, format, daysList.get(position).getStartTime()));
+        holder.endTime.setText(String.format(locale, format, daysList.get(position).getEndTime()));
     }
 
     @Override
     public int getItemCount() {
-        return dateSet.size();
+        return daysList.size();
     }
 
-    public void updateList(ArrayList<String> dates) {
-        dateSet = dates;
+    void updateList(ArrayList<Day> dates) {
+        daysList = dates;
         notifyDataSetChanged();
     }
 }
