@@ -41,7 +41,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder
         String format = "%.2f";
         Locale locale = Locale.US;
 
-        holder.date.setText(daysList.get(position).getDate());
+        holder.date.setText(daysList.get(position).getDateWorked());
         holder.startTime.setText(String.format(locale, format, daysList.get(position).getStartTime()));
         holder.endTime.setText(String.format(locale, format, daysList.get(position).getEndTime()));
     }
