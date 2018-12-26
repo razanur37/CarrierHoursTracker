@@ -23,10 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText startTime;
     private EditText endTime;
     private EditText dateText;
-    private TextView totalHours;
-    private TextView straightHours;
-    private TextView overtimeHours;
-    private TextView penaltyHours;
     private RecyclerView dateRecyclerView;
     private RecyclerView.Adapter dateRecyclerAdapter;
     private RecyclerView.LayoutManager dateRecyclerManager;
@@ -46,10 +42,6 @@ public class MainActivity extends AppCompatActivity {
         startTime = findViewById(R.id.et_start_time);
         endTime = findViewById(R.id.et_end_time);
         dateText = findViewById(R.id.et_date);
-        totalHours = findViewById(R.id.tv_total_hours);
-        straightHours = findViewById(R.id.tv_total_straight_hours);
-        overtimeHours = findViewById(R.id.tv_total_overtime_hours);
-        penaltyHours = findViewById(R.id.tv_total_penalty_hours);
 
         dateRecyclerView = findViewById(R.id.date_recycler_view);
         dateRecyclerView.setHasFixedSize(true);
@@ -125,10 +117,6 @@ public class MainActivity extends AppCompatActivity {
         else
             return;
 
-        totalHours.setText(String.format(locale, stringFormat, day.getHoursWorked()));
-        straightHours.setText(String.format(locale, stringFormat, day.getStraightTime()));
-        overtimeHours.setText(String.format(locale, stringFormat, day.getOvertime()));
-        penaltyHours.setText(String.format(locale, stringFormat, day.getPenalty()));
         daysList.add(day);
 
         ((DateAdapter) dateRecyclerAdapter).updateList(daysList);

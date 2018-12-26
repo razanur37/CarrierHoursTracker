@@ -10,7 +10,6 @@
         android:id="@+id/tv_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="monospace"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -20,23 +19,21 @@
         android:id="@+id/tv_item_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="monospace"
-        android:text="@string/start"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="8dp"
+        android:text="Start:"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_end"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
 
     <TextView
         android:id="@+id/tv_item_start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="monospace"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/tv_item_start"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_start"
+        app:layout_constraintStart_toEndOf="@+id/tv_item_start" />
 
     <TextView
         android:id="@+id/tv_item_end"
@@ -44,8 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:fontFamily="monospace"
-        android:text="@string/end"
+        android:text="End:"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/tv_item_end_time"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
@@ -54,11 +50,72 @@
         android:id="@+id/tv_item_end_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:fontFamily="monospace"
+        android:layout_marginEnd="64dp"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_end"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_item_hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_hours_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_item_hours_label" />
+
+    <TextView
+        android:id="@+id/tv_item_hours_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Hours:"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />
+
+    <TextView
+        android:id="@+id/tv_item_overtime_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:text="Overtime:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_item_overtime"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@+id/tv_item_hours"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />
+
+    <TextView
+        android:id="@+id/tv_item_overtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_overtime_label"
+        app:layout_constraintEnd_toStartOf="@+id/tv_item_penalty_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_item_overtime_label" />
+
+    <TextView
+        android:id="@+id/tv_item_penalty_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Penalty:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_item_penalty"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />
+
+    <TextView
+        android:id="@+id/tv_item_penalty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_penalty_label"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

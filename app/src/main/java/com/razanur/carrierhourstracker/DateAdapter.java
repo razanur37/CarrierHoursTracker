@@ -17,11 +17,17 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder
         TextView date;
         TextView startTime;
         TextView endTime;
+        TextView hoursWorked;
+        TextView overtime;
+        TextView penalty;
         DateViewHolder(View v) {
             super(v);
             date = v.findViewById(R.id.tv_item_date);
             startTime = v.findViewById(R.id.tv_item_start_time);
             endTime = v.findViewById(R.id.tv_item_end_time);
+            hoursWorked = v.findViewById(R.id.tv_item_hours);
+            overtime = v.findViewById(R.id.tv_item_overtime);
+            penalty = v.findViewById(R.id.tv_item_penalty);
         }
     }
 
@@ -44,6 +50,9 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder
         holder.date.setText(daysList.get(position).getDateWorked());
         holder.startTime.setText(String.format(locale, format, daysList.get(position).getStartTime()));
         holder.endTime.setText(String.format(locale, format, daysList.get(position).getEndTime()));
+        holder.hoursWorked.setText(String.format(locale, format, daysList.get(position).getHoursWorked()));
+        holder.overtime.setText(String.format(locale, format, daysList.get(position).getOvertime()));
+        holder.penalty.setText(String.format(locale, format, daysList.get(position).getPenalty()));
     }
 
     @Override

@@ -35,82 +35,6 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/et_end_time"
         app:layout_constraintStart_toStartOf="@+id/tv_start_time" />
 
-    <TextView
-        android:id="@+id/tv_label_hours_worked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hours_worked"
-        android:textSize="24sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_total_hours"
-        app:layout_constraintStart_toStartOf="@+id/tv_end_time" />
-
-    <TextView
-        android:id="@+id/tv_label_straight_hours_worked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/straight_time"
-        android:textSize="24sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_total_straight_hours"
-        app:layout_constraintStart_toStartOf="@+id/tv_label_hours_worked" />
-
-    <TextView
-        android:id="@+id/tv_label_overtime_hours_worked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/overtime_hours"
-        android:textSize="24sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_total_overtime_hours"
-        app:layout_constraintStart_toStartOf="@+id/tv_label_straight_hours_worked" />
-
-    <TextView
-        android:id="@+id/tv_label_penalty_hours_worked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/penalty_hours"
-        android:textSize="24sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_total_penalty_hours"
-        app:layout_constraintStart_toStartOf="@+id/tv_label_overtime_hours_worked" />
-
-    <TextView
-        android:id="@+id/tv_total_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/total"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/et_end_time"
-        app:layout_constraintTop_toBottomOf="@+id/et_end_time" />
-
-    <TextView
-        android:id="@+id/tv_total_straight_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/total"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/tv_total_hours"
-        app:layout_constraintTop_toBottomOf="@+id/tv_total_hours" />
-
-    <TextView
-        android:id="@+id/tv_total_overtime_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/total"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/tv_total_straight_hours"
-        app:layout_constraintTop_toBottomOf="@+id/tv_total_straight_hours" />
-
-    <TextView
-        android:id="@+id/tv_total_penalty_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/total"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/tv_total_overtime_hours"
-        app:layout_constraintTop_toBottomOf="@+id/tv_total_overtime_hours" />
-
     <EditText
         android:id="@+id/et_start_time"
         android:layout_width="60dp"
@@ -154,7 +78,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_label_penalty_hours_worked" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_end_time" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/date_recycler_view"
