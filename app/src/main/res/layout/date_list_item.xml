@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginTop="8dp"
-        android:text="Start:"
+        android:text="@string/start_colon"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="End:"
+        android:text="@string/end_colon"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/tv_item_end_time"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
@@ -70,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="Hours:"
+        android:text="@string/hours_colon"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
-        android:text="Overtime:"
+        android:text="@string/overtime_colon"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/tv_item_overtime"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Penalty:"
+        android:text="@string/penalty_colon"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/tv_item_penalty"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />

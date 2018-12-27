@@ -37,13 +37,13 @@ public class DateAdapter extends RecyclerView.Adapter<DateAdapter.DateViewHolder
 
     @NonNull
     @Override
-    public DateAdapter.DateViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DateAdapter.DateViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.date_list_item, parent, false);
         return new DateViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(DateViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DateViewHolder holder, int position) {
         String format = "%.2f";
         Locale locale = Locale.US;
 

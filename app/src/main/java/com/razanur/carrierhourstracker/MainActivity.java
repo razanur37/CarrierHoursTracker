@@ -37,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         startTime = findViewById(R.id.et_start_time);
         endTime = findViewById(R.id.et_end_time);
         dateText = findViewById(R.id.et_date);
@@ -87,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
         Day day;
-        Locale locale = Locale.US;
-        String stringFormat = "%.2f";
 
         double start;
         double end;
@@ -121,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
 
         ((DateAdapter) dateRecyclerAdapter).updateList(daysList);
     }
-
-
 
     private boolean verifyInputs(double start, double end) {
         // Verify inputs
