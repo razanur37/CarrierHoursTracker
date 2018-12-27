@@ -3,6 +3,7 @@ package com.razanur.carrierhourstracker;
 /**
  * Represents a single, continuous block of work performed on a specific date.
  * @author Casey English
+ * @version 1.0
  */
 class Day {
     /**
@@ -38,13 +39,13 @@ class Day {
      * Constructor
      *
      * <p>
-     *     Constructor for Day class. Takes in the Date, Start, and End times and calls methods to
-     *     calculate total, straight time, overtime, and penalty hours worked.
+     *     Constructor for {@code Day} class. Takes in the Date, Start, and End times and calls
+     *     methods to calculate total, straight time, overtime, and penalty hours worked.
      * </p>
      *
-     * @param date The date the work was performed.
-     * @param start The Start Time for the work.
-     * @param end The End Time for the work.
+     * @param date the date the work was performed.
+     * @param start the Start Time for the work.
+     * @param end the End Time for the work.
      */
     Day(String date, double start, double end) {
         dateWorked = date;
@@ -55,6 +56,72 @@ class Day {
         calcStraightTime();
         calcOvertime();
         calcPenalty();
+    }
+
+    /**
+     * Special Constructor
+     * <p>
+     *     Special Constructor designed to be used exclusively with {@link #dateAsDay(String)}.
+     * </p>
+     * @param date the date the work was performed.
+     */
+    private Day(String date) {
+        dateWorked = date;
+    }
+
+    /**
+     * Static method used to quickly convert a date into a {@code Day} object.
+     * <p>
+     *     Primarily used in conjunction with {@code List<T>.Contains()} to determine if a date
+     *     has already been added to the List.
+     * </p>
+     * @param date the date the work was performed.
+     * @return a new {@code Day} object.
+     */
+    static Day dateAsDay(String date) {
+        return new Day(date);
+    }
+
+    /**
+     * Indicates whether a {@code Day} object is "equal to" this one.
+     * <p>
+     *     Equality for a {@code Day} object only compares the {@link #dateWorked} fields between
+     *     the two {@code Day} objects and returns {@code true} if the two {@code String} objects
+     *     are the same and {@code false} otherwise.
+     * </p>
+     * @param obj the reference object with which to compare.
+     * @return {@code true} if the {@link #dateWorked} fields are the same, {@code false} otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+
+        if (!(obj instanceof Day))
+            return false;
+
+        Day d = (Day) obj;
+
+        return dateWorked.equals(d.getDateWorked());
+    }
+
+    /**
+     * Returns a hash code value for the Day object. This method is supported for the benefit of
+     * hash tables such as those provided by {@code HashMap}.
+     * <p>
+     *     Computes the hash code based off the hash code of the {@link #dateWorked}. This means
+     *     two {@code Day} objects with the same {@link #dateWorked} will return the same hash code.
+     * </p>
+     * @return a hash code value for this Day object.
+     */
+    @Override
+    public int hashCode() {
+        int prime = 37;
+        int result = 1;
+
+        result = prime * result + ((dateWorked == null) ? 0 : dateWorked.hashCode());
+
+        return result;
     }
 
     /**

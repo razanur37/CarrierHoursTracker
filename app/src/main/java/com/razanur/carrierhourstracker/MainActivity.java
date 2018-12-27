@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
@@ -44,6 +45,16 @@ public class MainActivity extends AppCompatActivity {
         dateRecyclerView = findViewById(R.id.date_recycler_view);
         dateRecyclerView.setHasFixedSize(true);
 
+        createDateDialog();
+
+        dateRecyclerManager = new LinearLayoutManager(this);
+        dateRecyclerView.setLayoutManager(dateRecyclerManager);
+
+        dateRecyclerAdapter = new DateAdapter(daysList);
+        dateRecyclerView.setAdapter(dateRecyclerAdapter);
+    }
+
+    private void createDateDialog() {
         dateListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -64,12 +75,6 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
         });
-
-        dateRecyclerManager = new LinearLayoutManager(this);
-        dateRecyclerView.setLayoutManager(dateRecyclerManager);
-
-        dateRecyclerAdapter = new DateAdapter(daysList);
-        dateRecyclerView.setAdapter(dateRecyclerAdapter);
     }
 
     private void updateLabel() {
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        inputsVerified = verifyInputs(start, end);
+        inputsVerified = verifyInputs(start, end, date);
 
         if (inputsVerified)
             day = new Day(date, start, end);
@@ -118,8 +123,14 @@ public class MainActivity extends AppCompatActivity {
         ((DateAdapter) dateRecyclerAdapter).updateList(daysList);
     }
 
-    private boolean verifyInputs(double start, double end) {
+    private boolean verifyInputs(double start, double end, String date) {
         // Verify inputs
+        if (daysList.contains(Day.dateAsDay(date))) {
+
+            showToast("Enter a Different Date From Ones Already Entered");
+            return false;
+        }
+
         if (start >= 24.0 || end >= 24.0) {
             showToast("Start and End Times Must be on a 24-hour Clock");
             return false;
