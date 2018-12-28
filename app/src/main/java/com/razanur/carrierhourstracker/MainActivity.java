@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText startTime;
     private EditText endTime;
     private EditText dateText;
+    private RadioGroup nsDayGroup;
     private RecyclerView dateRecyclerView;
     private RecyclerView.Adapter dateRecyclerAdapter;
     private RecyclerView.LayoutManager dateRecyclerManager;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         startTime = findViewById(R.id.et_start_time);
         endTime = findViewById(R.id.et_end_time);
         dateText = findViewById(R.id.et_date);
+        nsDayGroup = findViewById(R.id.ns_day_group);
 
         dateRecyclerView = findViewById(R.id.date_recycler_view);
         dateRecyclerView.setHasFixedSize(true);
@@ -52,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
 
         dateRecyclerAdapter = new DateAdapter(daysList);
         dateRecyclerView.setAdapter(dateRecyclerAdapter);
+    }
+
+    private boolean checkNSDay(int checkedRadioButtonId) {
+        return checkedRadioButtonId == R.id.rb_ns_yes;
     }
 
     private void createDateDialog() {
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         double end;
         String date;
         boolean inputsVerified;
+        boolean isNSDay = checkNSDay(nsDayGroup.getCheckedRadioButtonId());
 
         // Make sure inputs were entered
         try {
@@ -114,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         inputsVerified = verifyInputs(start, end, date);
 
         if (inputsVerified)
-            day = new Day(date, start, end);
+            day = new Day(date, start, end, isNSDay);
         else
             return;
 

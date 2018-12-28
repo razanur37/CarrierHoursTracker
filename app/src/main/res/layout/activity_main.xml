@@ -22,8 +22,9 @@
         android:layout_height="wrap_content"
         android:text="NS Day?"
         android:textSize="24sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/rb_ns_yes"
-        app:layout_constraintStart_toStartOf="@+id/tv_label_date" />
+        app:layout_constraintBottom_toTopOf="@+id/tv_start_time"
+        app:layout_constraintStart_toStartOf="@+id/tv_label_date"
+        app:layout_constraintTop_toBottomOf="@+id/tv_label_date" />
 
     <TextView
         android:id="@+id/tv_label_date"
@@ -57,8 +58,8 @@
         android:inputType="numberDecimal"
         android:maxLength="5"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/rb_ns_no"
-        app:layout_constraintTop_toBottomOf="@+id/rb_ns_yes" />
+        app:layout_constraintEnd_toEndOf="@+id/ns_day_group"
+        app:layout_constraintTop_toBottomOf="@+id/ns_day_group" />
 
     <EditText
         android:id="@+id/et_end_time"
@@ -117,29 +118,35 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <RadioButton
-        android:id="@+id/rb_ns_yes"
+        android:id="@+id/ns_day_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:text="Yes"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/rb_ns_no"
-        app:layout_constraintTop_toBottomOf="@+id/et_date" />
+        android:checkedButton="@+id/rb_ns_no"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/et_date"
+        app:layout_constraintTop_toBottomOf="@+id/et_date">
 
-    <RadioButton
-        android:id="@+id/rb_ns_no"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/rb_ns_yes"
-        app:layout_constraintEnd_toEndOf="@+id/et_date" />
+        <RadioButton
+            android:id="@+id/rb_ns_yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="223dp"
+            tools:layout_editor_absoluteY="93dp" />
+
+        <RadioButton
+            android:id="@+id/rb_ns_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="292dp"
+            tools:layout_editor_absoluteY="93dp" />
+
+    </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>

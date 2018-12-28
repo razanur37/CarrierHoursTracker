@@ -19,6 +19,10 @@ class Day {
      */
     private double endTime;
     /**
+     * Marks whether the day worked was an NS day or not.
+     */
+    private boolean isNSDay;
+    /**
      * The total hours worked on dateWorked.
      */
     private double hoursWorked;
@@ -46,11 +50,13 @@ class Day {
      * @param date the date the work was performed.
      * @param start the Start Time for the work.
      * @param end the End Time for the work.
+     * @param nsDay whether or not this was an NS day.
      */
-    Day(String date, double start, double end) {
+    Day(String date, double start, double end, boolean nsDay) {
         dateWorked = date;
         startTime = start;
         endTime = end;
+        isNSDay = nsDay;
 
         calcHoursWorked();
         calcStraightTime();
@@ -156,7 +162,10 @@ class Day {
      * </p>
      */
     private void calcStraightTime() {
-        straightTime = Math.min(hoursWorked, 8.0);
+        if (!isNSDay)
+            straightTime = Math.min(hoursWorked, 8.0);
+        else
+            straightTime = 0.0;
     }
 
     /**
@@ -167,8 +176,10 @@ class Day {
      * </p>
      */
     private void calcOvertime() {
-        if (hoursWorked > 8.0)
+        if (!isNSDay)
             overtime = Math.min(hoursWorked-straightTime, 2.0);
+        else
+            overtime = Math.min(hoursWorked, 8.0);
     }
 
     /**
