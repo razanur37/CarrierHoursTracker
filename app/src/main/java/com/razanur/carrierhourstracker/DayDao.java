@@ -17,4 +17,7 @@ public interface DayDao {
 
     @Query("SELECT * from day_table ORDER BY date ASC")
     LiveData<List<Day>> getAllDays();
+
+    @Query("SELECT * from day_table WHERE date LIKE :date")
+    public LiveData<Day> getDayWithDate(String date);
 }

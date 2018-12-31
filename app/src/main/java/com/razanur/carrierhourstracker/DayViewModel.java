@@ -24,4 +24,8 @@ public class DayViewModel extends AndroidViewModel {
     public void insert(Day day) {
         mRepository.insert(day);
     }
+
+    LiveData<Day> findDay(Day day) {
+        return
+    }
 }
