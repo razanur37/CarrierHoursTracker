@@ -25,8 +25,12 @@ public class DayRepository {
         new insertAsyncTask(mDayDao).execute(day);
     }
 
-    public LiveData<Day> loadDay(final String date) {
-        return mDayDao.getDayWithDate(date);
+    public boolean checkIfDayExists(final String date) {
+        Day day = mDayDao.getDayWithDate(date).getValue();
+        if (day == null)
+            return false;
+        else
+            return day.getDate().equals(date);
     }
 
     private static class insertAsyncTask extends AsyncTask<Day, Void, Void> {

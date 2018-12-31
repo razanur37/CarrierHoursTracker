@@ -25,7 +25,7 @@ public class DayViewModel extends AndroidViewModel {
         mRepository.insert(day);
     }
 
-    LiveData<Day> findDay(Day day) {
-        return
+    boolean doesListContainDay(String date) {
+        return mRepository.checkIfDayExists(date);
     }
 }

@@ -3,6 +3,7 @@ package com.razanur.carrierhourstracker;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,10 @@ import java.util.Locale;
 
 public class NewDayActivity extends AppCompatActivity {
 
-    public static final String EXTRA_REPLY = "com.razanur.carrierhourstracker.daylistsql.REPLY";
+    public static final String DATE_REPLY = "com.razanur.carrierhourstracker.daylistsql.DATE";
+    public static final String START_REPLY = "com.razanur.carrierhourstracker.daylistsql.START";
+    public static final String END_REPLY = "com.razanur.carrierhourstracker.daylistsql.END";
+    public static final String NSDAY_REPLY = "com.razanur.carrierhourstracker.daylistsql.NSDAY";
 
     private EditText startTime;
     private EditText endTime;
@@ -107,17 +111,21 @@ public class NewDayActivity extends AppCompatActivity {
 
         inputsVerified = verifyInputs(start, end, date);
 
-        if (inputsVerified)
-            day = new Day(date, start, end, isNSDay);
-        else
-            return;
+        Intent replyIntent = new Intent();
 
+        if (inputsVerified) {
+            replyIntent.putExtra(DATE_REPLY, date);
+            replyIntent.putExtra(START_REPLY, start);
+            replyIntent.putExtra(END_REPLY, end);
+            replyIntent.putExtra(NSDAY_REPLY, isNSDay);
+            setResult(RESULT_OK, replyIntent);
+            finish();
+        }
     }
 
     private boolean verifyInputs(double start, double end, String date) {
         // Verify inputs
-        if (daysList.contains(Day.dateAsDay(date))) {
-
+        if (mDayViewModel.doesListContainDay(date)) {
             showToast("Enter a Different Date From Ones Already Entered");
             return false;
         }

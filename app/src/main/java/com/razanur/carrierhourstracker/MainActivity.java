@@ -88,7 +88,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Day day = new Day(data.getStringExtra(NewDayActivity.EXTRA_REPLY));
+            Day day = new Day(
+                    data.getStringExtra(NewDayActivity.DATE_REPLY),
+                    data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
+                    data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
+                    data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));
             mDayViewModel.insert(day);
         } else {
             Toast.makeText(
