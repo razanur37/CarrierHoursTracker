@@ -1,67 +1,76 @@
 package com.razanur.carrierhourstracker;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 /**
  * Represents a single, continuous block of work performed on a specific date.
  * @author Casey English
  * @version 1.0
  */
-class Day {
+@Entity(tableName = "day_table")
+public class Day {
     /**
      * The Date (in MM/dd/yyyy format) the work was performed.
      */
-    private String dateWorked;
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "date")
+    private String mDate;
     /**
-     * The time (in 24-hour decimal format) that work began on dateWorked.
+     * The time (in 24-hour decimal format) that work began on mDate.
      */
-    private double startTime;
+    private double mStartTime;
     /**
-     * The time (in 24-hour decimal format) that work ended on dateWorked.
+     * The time (in 24-hour decimal format) that work ended on mDate.
      */
-    private double endTime;
+    private double mEndTime;
     /**
      * Marks whether the day worked was an NS day or not.
      */
-    private boolean isNSDay;
+    private boolean mNsDay;
     /**
-     * The total hours worked on dateWorked.
+     * The total hours worked on mDate.
      */
-    private double hoursWorked;
+    private double mHoursWorked;
     /**
      * The amount of hours worked at straight time.
      */
-    private double straightTime;
+    private double mStraightTime;
     /**
-     * The amount of overtime hours worked.
+     * The amount of mOvertime hours worked.
      */
-    private double overtime;
+    private double mOvertime;
     /**
-     * The amount of penalty overtime hours worked.
+     * The amount of mPenalty mOvertime hours worked.
      */
-    private double penalty;
+    private double mPenalty;
 
     /**
      * Constructor
      *
      * <p>
      *     Constructor for {@code Day} class. Takes in the Date, Start, and End times and calls
-     *     methods to calculate total, straight time, overtime, and penalty hours worked.
+     *     methods to calculate total, straight time, mOvertime, and mPenalty hours worked.
      * </p>
      *
      * @param date the date the work was performed.
-     * @param start the Start Time for the work.
-     * @param end the End Time for the work.
+     * @param startTime the Start Time for the work.
+     * @param endTime the End Time for the work.
      * @param nsDay whether or not this was an NS day.
      */
-    Day(String date, double start, double end, boolean nsDay) {
-        dateWorked = date;
-        startTime = start;
-        endTime = end;
-        isNSDay = nsDay;
+    public Day(@NonNull String date, double startTime, double endTime, boolean nsDay) {
+        mDate = date;
+        mStartTime = startTime;
+        mEndTime = endTime;
+        mNsDay = nsDay;
 
-        calcHoursWorked();
-        calcStraightTime();
-        calcOvertime();
-        calcPenalty();
+        setHoursWorked(calcHoursWorked());
+        setStraightTime(calcStraightTime());
+        setOvertime(calcOvertime());
+        setPenalty(calcPenalty());
     }
 
     /**
@@ -72,7 +81,7 @@ class Day {
      * @param date the date the work was performed.
      */
     private Day(String date) {
-        dateWorked = date;
+        mDate = date;
     }
 
     /**
@@ -91,12 +100,12 @@ class Day {
     /**
      * Indicates whether a {@code Day} object is "equal to" this one.
      * <p>
-     *     Equality for a {@code Day} object only compares the {@link #dateWorked} fields between
+     *     Equality for a {@code Day} object only compares the {@link #mDate} fields between
      *     the two {@code Day} objects and returns {@code true} if the two {@code String} objects
      *     are the same and {@code false} otherwise.
      * </p>
      * @param obj the reference object with which to compare.
-     * @return {@code true} if the {@link #dateWorked} fields are the same, {@code false} otherwise.
+     * @return {@code true} if the {@link #mDate} fields are the same, {@code false} otherwise.
      */
     @Override
     public boolean equals(Object obj) {
@@ -108,15 +117,15 @@ class Day {
 
         Day d = (Day) obj;
 
-        return dateWorked.equals(d.getDateWorked());
+        return mDate.equals(d.getDate());
     }
 
     /**
      * Returns a hash code value for the Day object. This method is supported for the benefit of
      * hash tables such as those provided by {@code HashMap}.
      * <p>
-     *     Computes the hash code based off the hash code of the {@link #dateWorked}. This means
-     *     two {@code Day} objects with the same {@link #dateWorked} will return the same hash code.
+     *     Computes the hash code based off the hash code of the {@link #mDate}. This means
+     *     two {@code Day} objects with the same {@link #mDate} will return the same hash code.
      * </p>
      * @return a hash code value for this Day object.
      */
@@ -125,7 +134,7 @@ class Day {
         int prime = 37;
         int result = 1;
 
-        result = prime * result + ((dateWorked == null) ? 0 : dateWorked.hashCode());
+        result = prime * result + ((mDate == null) ? 0 : mDate.hashCode());
 
         return result;
     }
@@ -133,112 +142,135 @@ class Day {
     /**
      * Calculates the total hours worked.
      * <p>
-     *     Subtracts the {@link #startTime} from the {@link #endTime} and updates
-     *     {@link #hoursWorked} with the result.
+     *     Subtracts the {@link #mStartTime} from the {@link #mEndTime} and updates
+     *     {@link #mHoursWorked} with the result.
      * </p>
      */
-    private void calcHoursWorked() {
-        hoursWorked = endTime - startTime;
-
-        determineLunch();
+    private double calcHoursWorked() {
+        return determineLunch(mEndTime - mStartTime);
     }
 
     /**
      * Determines if a lunch was taken.
      * <p>
-     *     Checks if {@link #hoursWorked} is 6.0 or more, and subtracts a 30-minute lunch
-     *     from {@link #hoursWorked} if it is.
+     *     Checks if {@link #mHoursWorked} is 6.0 or more, and subtracts a 30-minute lunch
+     *     from {@link #mHoursWorked} if it is.
      * </p>
      */
-    private void determineLunch() {
+    private double determineLunch(double hoursWorked) {
         if (hoursWorked >= 6.0)
-            hoursWorked -= 0.5;
+            return (hoursWorked - 0.5);
+        else
+            return hoursWorked;
     }
 
     /**
      * Calculates the amount of hours worked at the straight time rate.
      * <p>
-     *     Sets {@link #straightTime} to the lesser of {@link #hoursWorked} and 8.0.
+     *     Sets {@link #mStraightTime} to the lesser of {@link #mHoursWorked} and 8.0.
      * </p>
      */
-    private void calcStraightTime() {
-        if (!isNSDay)
-            straightTime = Math.min(hoursWorked, 8.0);
+    private double calcStraightTime() {
+        if (!mNsDay)
+            return Math.min(mHoursWorked, 8.0);
         else
-            straightTime = 0.0;
+            return 0.0;
     }
 
     /**
-     * Calculates the amount of hours worked at the overtime rate.
+     * Calculates the amount of hours worked at the mOvertime rate.
      * <p>
-     *     Sets {@link #overtime} to the lesser of {@link #hoursWorked}-{@link #straightTime}
+     *     Sets {@link #mOvertime} to the lesser of {@link #mHoursWorked}-{@link #mStraightTime}
      *     and 2.0.
      * </p>
      */
-    private void calcOvertime() {
-        if (!isNSDay)
-            overtime = Math.min(hoursWorked-straightTime, 2.0);
+    private double calcOvertime() {
+        if (!mNsDay)
+            return Math.min(mHoursWorked - mStraightTime, 2.0);
         else
-            overtime = Math.min(hoursWorked, 8.0);
+           return Math.min(mHoursWorked, 8.0);
     }
 
     /**
-     * Calculates the amount of hours worked at the penalty overtime rate.
+     * Calculates the amount of hours worked at the mPenalty mOvertime rate.
      * <p>
-     *     Sets {@link #penalty} to the greater of
-     *     {@link #hoursWorked}-({@link #straightTime}+{@link #overtime} and 0.0.
+     *     Sets {@link #mPenalty} to the greater of
+     *     {@link #mHoursWorked}-({@link #mStraightTime}+{@link #mOvertime} and 0.0.
      * </p>
      */
-    private void calcPenalty() {
-        penalty = Math.max(hoursWorked-(straightTime+overtime), 0.0);
+    private double calcPenalty() {
+        return Math.max(mHoursWorked -(mStraightTime + mOvertime), 0.0);
     }
 
     /**
-     * @return {@link #penalty}
+     * @return {@link #mPenalty}
      */
-    String getDateWorked() {
-        return dateWorked;
+    public String getDate() {
+        return mDate;
     }
 
     /**
-     * @return {@link #startTime}
+     * @return {@link #mNsDay}
      */
-    double getStartTime() {
-        return startTime;
+    public boolean isNsDay() {
+        return mNsDay;
     }
 
     /**
-     * @return {@link #endTime}
+     * @return {@link #mStartTime}
      */
-    double getEndTime() {
-        return endTime;
+    public double getStartTime() {
+        return mStartTime;
     }
 
     /**
-     * @return {@link #hoursWorked}
+     * @return {@link #mEndTime}
      */
-    double getHoursWorked() {
-        return hoursWorked;
+    public double getEndTime() {
+        return mEndTime;
     }
 
     /**
-     * @return {@link #straightTime}
+     * @return {@link #mHoursWorked}
      */
-    double getStraightTime() {
-        return straightTime;
+    public double getHoursWorked() {
+        return mHoursWorked;
+    }
+
+    public void setHoursWorked(double hoursWorked) {
+        mHoursWorked = hoursWorked;
     }
 
     /**
-     * @return {@link #overtime}
+     * @return {@link #mStraightTime}
      */
-    double getOvertime() {
-        return overtime;
+    public double getStraightTime() {
+        return mStraightTime;
+    }
+
+    public void setStraightTime(double straightTime) {
+        mStraightTime = straightTime;
     }
 
     /**
-     * @return {@link #penalty}
+     * @return {@link #mOvertime}
      */
-    double getPenalty() {
-        return penalty;
+    public double getOvertime() {
+        return mOvertime;
+    }
+
+    public void setOvertime(double overtime) {
+        mOvertime = overtime;
+    }
+
+    /**
+     * @return {@link #mPenalty}
+     */
+    public double getPenalty() {
+        return mPenalty;
+    }
+
+    public void setPenalty(double penalty) {
+        mPenalty = penalty;
     }
 }

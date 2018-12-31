@@ -6,13 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -53,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         dateRecyclerManager = new LinearLayoutManager(this);
         dateRecyclerView.setLayoutManager(dateRecyclerManager);
 
-        dateRecyclerAdapter = new DateAdapter(daysList);
+        dateRecyclerAdapter = new DayListAdapter(daysList);
         dateRecyclerView.setAdapter(dateRecyclerAdapter);
     }
 
@@ -128,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
         daysList.add(day);
 
-        ((DateAdapter) dateRecyclerAdapter).updateList(daysList);
+        ((DayListAdapter) dateRecyclerAdapter).setDays(daysList);
     }
 
     private boolean verifyInputs(double start, double end, String date) {
