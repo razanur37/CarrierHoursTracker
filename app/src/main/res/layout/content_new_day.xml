@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".NewDayActivity"
+    tools:layout_editor_absoluteY="25dp">
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:text="@string/date"
+        android:textSize="24sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_date"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/et_date"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="64dp"
+        android:clickable="true"
+        android:editable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="@string/date"
+        android:importantForAutofill="no"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_ns_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NS Day?"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_start_time"
+        app:layout_constraintStart_toStartOf="@+id/tv_date"
+        app:layout_constraintTop_toBottomOf="@+id/tv_date" />
+
+    <RadioGroup
+        android:id="@+id/ns_day_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:checkedButton="@+id/rb_ns_no"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/et_date"
+        app:layout_constraintTop_toBottomOf="@+id/et_date">
+
+        <RadioButton
+            android:id="@+id/rb_ns_yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="223dp"
+            tools:layout_editor_absoluteY="93dp" />
+
+        <RadioButton
+            android:id="@+id/rb_ns_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            tools:layout_editor_absoluteX="292dp"
+            tools:layout_editor_absoluteY="93dp" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/tv_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_time"
+        android:textSize="24sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_start_time"
+        app:layout_constraintStart_toStartOf="@+id/tv_ns_day" />
+
+    <EditText
+        android:id="@+id/et_start_time"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:digits="0123456789."
+        android:ems="10"
+        android:hint="@string/start"
+        android:imeOptions="actionNext"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
+        android:maxLength="5"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/ns_day_group"
+        app:layout_constraintTop_toBottomOf="@+id/ns_day_group" />
+
+    <TextView
+        android:id="@+id/tv_end_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/end_time"
+        android:textSize="24sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/et_end_time"
+        app:layout_constraintStart_toStartOf="@+id/tv_start_time" />
+
+    <EditText
+        android:id="@+id/et_end_time"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:digits="0123456789."
+        android:ems="10"
+        android:hint="@string/end"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="numberDecimal"
+        android:maxLength="5"
+        android:singleLine="true"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/et_start_time"
+        app:layout_constraintTop_toBottomOf="@+id/et_start_time" />
+
+    <Button
+        android:id="@+id/button_calculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:onClick="setTotals"
+        android:text="@string/calculate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_end_time" />
+
+</android.support.constraint.ConstraintLayout>

@@ -1,163 +1,106 @@
 package com.razanur.carrierhourstracker;
 
 import android.app.DatePickerDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText startTime;
-    private EditText endTime;
-    private EditText dateText;
-    private RadioGroup nsDayGroup;
-    private RecyclerView dateRecyclerView;
-    private RecyclerView.Adapter dateRecyclerAdapter;
-    private RecyclerView.LayoutManager dateRecyclerManager;
+    public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
 
-    ArrayList<Day> daysList = new ArrayList<>();
-
-    final Calendar myCalendar = Calendar.getInstance();
-    DatePickerDialog.OnDateSetListener dateListener;
+    private DayViewModel mDayViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        startTime = findViewById(R.id.et_start_time);
-        endTime = findViewById(R.id.et_end_time);
-        dateText = findViewById(R.id.et_date);
-        nsDayGroup = findViewById(R.id.ns_day_group);
+        RecyclerView recyclerView = findViewById(R.id.date_recycler_view);
+        final DayListAdapter adapter = new DayListAdapter(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        dateRecyclerView = findViewById(R.id.date_recycler_view);
-        dateRecyclerView.setHasFixedSize(true);
+        mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
-        createDateDialog();
-
-        dateRecyclerManager = new LinearLayoutManager(this);
-        dateRecyclerView.setLayoutManager(dateRecyclerManager);
-
-        dateRecyclerAdapter = new DateAdapter(daysList);
-        dateRecyclerView.setAdapter(dateRecyclerAdapter);
-    }
-
-    private boolean checkNSDay(int checkedRadioButtonId) {
-        return checkedRadioButtonId == R.id.rb_ns_yes;
-    }
-
-    private void createDateDialog() {
-        dateListener = new DatePickerDialog.OnDateSetListener() {
+        mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, month);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+            public void onChanged(@Nullable List<Day> days) {
+                adapter.setDays(days);
             }
-        };
+        });
 
-        dateText.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                new DatePickerDialog(MainActivity.this, dateListener,
-                        myCalendar.get(Calendar.YEAR),
-                        myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH))
-                        .show();
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
+                startActivityForResult(intent, NEW_DAY_ACTIVITY_REQUEST_CODE);
             }
         });
     }
 
-    private void updateLabel() {
-        String format = "MM/dd/yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
-
-        dateText.setText(sdf.format(myCalendar.getTime()));
-    }
-
-    public void setTotals(View v) {
-        InputMethodManager imm = (InputMethodManager) getApplicationContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-
-        Day day;
-
-        double start;
-        double end;
-        String date;
-        boolean inputsVerified;
-        boolean isNSDay = checkNSDay(nsDayGroup.getCheckedRadioButtonId());
-
-        // Make sure inputs were entered
-        try {
-            start = Double.parseDouble(startTime.getText().toString());
-            end = Double.parseDouble(endTime.getText().toString());
-        } catch (NumberFormatException e) {
-            showToast("Enter a Start Time and an End Time");
-            return;
-        }
-
-        date = dateText.getText().toString();
-        if (date.equals("")) {
-            showToast("Enter a Date");
-            return;
-        }
-
-        inputsVerified = verifyInputs(start, end, date);
-
-        if (inputsVerified)
-            day = new Day(date, start, end, isNSDay);
-        else
-            return;
-
-        daysList.add(day);
-
-        ((DateAdapter) dateRecyclerAdapter).updateList(daysList);
-    }
-
-    private boolean verifyInputs(double start, double end, String date) {
-        // Verify inputs
-        if (daysList.contains(Day.dateAsDay(date))) {
-
-            showToast("Enter a Different Date From Ones Already Entered");
-            return false;
-        }
-
-        if (start >= 24.0 || end >= 24.0) {
-            showToast("Start and End Times Must be on a 24-hour Clock");
-            return false;
-        }
-
-        if (start > end) {
-            showToast("End Time Must be Later Than Start Time");
-            return false;
-        }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
-    private void showToast(String message) {
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        Toast.makeText(context, message, duration).show();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_clear) {
+            mDayViewModel.clear();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Day day = new Day(
+                    data.getStringExtra(NewDayActivity.DATE_REPLY),
+                    data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
+                    data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
+                    data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));
+            mDayViewModel.insert(day);
+        } else {
+            Toast.makeText(
+                    getApplicationContext(),
+                    R.string.empty_not_saved,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 
 }
