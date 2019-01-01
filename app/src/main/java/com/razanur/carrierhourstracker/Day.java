@@ -34,7 +34,7 @@ public class Day {
         mEndTime = endTime;
         mNsDay = nsDay;
 
-        mExcluded = determineIfExcluded();
+        mExcluded = determineIfExcluded(CarrierUtils.unReverseDate(date));
 
         mHoursWorked = calcHoursWorked();
         mStraightTime = calcStraightTime();
@@ -109,7 +109,7 @@ public class Day {
             return 0;
     }
 
-    private boolean determineIfExcluded() {
+    private boolean determineIfExcluded(String date) {
         String format = "MM/dd/yyyy";
         String exclusionStart;
         String exclusionEnd;
@@ -117,7 +117,7 @@ public class Day {
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, Calendar.DECEMBER);
-        cal.set(Calendar.YEAR, Integer.valueOf(mDate.substring(6)));
+        cal.set(Calendar.YEAR, Integer.valueOf(date.substring(6)));
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
         switch (cal.get(Calendar.DAY_OF_WEEK)) {
@@ -155,15 +155,15 @@ public class Day {
 
         Date startDate;
         Date endDate;
-        Date date;
+        Date currentDate;
 
         try {
             startDate = sdf.parse(exclusionStart);
             endDate = sdf.parse(exclusionEnd);
-            date = sdf.parse(mDate);
+            currentDate = sdf.parse(date);
 
-            if ((date.after(startDate) && date.before(endDate)) ||
-                    (mDate.equals(exclusionStart)) || mDate.equals(exclusionEnd)) {
+            if ((currentDate.after(startDate) && currentDate.before(endDate)) ||
+                    (date.equals(exclusionStart)) || date.equals(exclusionEnd)) {
                 return true;
             }
         } catch (ParseException e) {
