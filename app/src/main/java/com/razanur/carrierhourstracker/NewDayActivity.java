@@ -1,9 +1,11 @@
 package com.razanur.carrierhourstracker;
 
 import android.app.DatePickerDialog;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class NewDayActivity extends AppCompatActivity {
@@ -28,6 +31,7 @@ public class NewDayActivity extends AppCompatActivity {
     private EditText endTime;
     private EditText dateText;
     private RadioGroup nsDayGroup;
+    private List<Day> mDays;
 
     private DayViewModel mDayViewModel;
 
@@ -45,6 +49,13 @@ public class NewDayActivity extends AppCompatActivity {
         nsDayGroup = findViewById(R.id.ns_day_group);
 
         mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
+
+        mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
+            @Override
+            public void onChanged(@Nullable List<Day> days) {
+                mDays = days;
+            }
+        });
 
         createDateDialog();
     }
@@ -125,7 +136,7 @@ public class NewDayActivity extends AppCompatActivity {
 
     private boolean verifyInputs(double start, double end, String date) {
         // Verify inputs
-        if (mDayViewModel.doesListContainDay(date)) {
+        if (mDays.contains(Day.dateAsDay(date))) {
             showToast("Enter a Different Date From Ones Already Entered");
             return false;
         }
