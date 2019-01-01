@@ -17,5 +17,6 @@
     <string name="hours_colon">Hours:</string>
     <string name="overtime_colon">Overtime:</string>
     <string name="penalty_colon">Penalty:</string>
-    <string name="empty_not_saved">Day not saved because it is empty.</string>
+    <string name="empty_not_saved">Entry Cancelled</string>
+    <string name="action_clear">Clear Entries</string>
 </resources>

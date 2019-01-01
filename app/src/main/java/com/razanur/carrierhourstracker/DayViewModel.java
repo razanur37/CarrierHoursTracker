@@ -21,7 +21,11 @@ public class DayViewModel extends AndroidViewModel {
         return mAllDays;
     }
 
-    public void insert(Day day) {
+    void insert(Day day) {
         mRepository.insert(day);
+    }
+
+    void clear() {
+        mRepository.clear();
     }
 }

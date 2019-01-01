@@ -46,7 +46,6 @@ public abstract class DayRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(final Void... params) {
-            mDao.deleteAll();
             return null;
         }
     }
