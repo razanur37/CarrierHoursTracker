@@ -18,7 +18,7 @@ public class Day {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "date")
-    private String mDate;
+    private Date mDate;
     private double mStartTime;
     private double mEndTime;
     private boolean mNsDay;
@@ -28,13 +28,13 @@ public class Day {
     private double mOvertime;
     private double mPenalty;
 
-    public Day(@NonNull String date, double startTime, double endTime, boolean nsDay) {
+    public Day(@NonNull Date date, double startTime, double endTime, boolean nsDay) {
         mDate = date;
         mStartTime = startTime;
         mEndTime = endTime;
         mNsDay = nsDay;
 
-        mExcluded = determineIfExcluded(CarrierUtils.unReverseDate(date));
+        mExcluded = determineIfExcluded(date);
 
         mHoursWorked = calcHoursWorked();
         mStraightTime = calcStraightTime();
@@ -42,11 +42,11 @@ public class Day {
         mPenalty = calcPenalty();
     }
 
-    private Day(String date) {
+    private Day(Date date) {
         mDate = date;
     }
 
-    static Day dateAsDay(String date) {
+    static Day dateAsDay(Date date) {
         return new Day(date);
     }
 
@@ -109,39 +109,39 @@ public class Day {
             return 0;
     }
 
-    private boolean determineIfExcluded(String date) {
+    private boolean determineIfExcluded(Date date) {
         String format = "MM/dd/yyyy";
         String exclusionStart;
         String exclusionEnd;
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
 
         Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
         cal.set(Calendar.MONTH, Calendar.DECEMBER);
-        cal.set(Calendar.YEAR, Integer.valueOf(date.substring(6)));
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
         switch (cal.get(Calendar.DAY_OF_WEEK)) {
-            case 1:
+            case Calendar.SUNDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
                 exclusionStart = sdf.format(cal.getTime());
                 break;
-            case 2:
+            case Calendar.MONDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+5);
                 exclusionStart = sdf.format(cal.getTime());
                 break;
-            case 3:
+            case Calendar.TUESDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+4);
                 exclusionStart = sdf.format(cal.getTime());
                 break;
-            case 4:
+            case Calendar.WEDNESDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+3);
                 exclusionStart = sdf.format(cal.getTime());
                 break;
-            case 5:
+            case Calendar.THURSDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+2);
                 exclusionStart = sdf.format(cal.getTime());
                 break;
-            case 6:
+            case Calendar.FRIDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
                 exclusionStart = sdf.format(cal.getTime());
                 break;
@@ -155,15 +155,13 @@ public class Day {
 
         Date startDate;
         Date endDate;
-        Date currentDate;
 
         try {
             startDate = sdf.parse(exclusionStart);
             endDate = sdf.parse(exclusionEnd);
-            currentDate = sdf.parse(date);
 
-            if ((currentDate.after(startDate) && currentDate.before(endDate)) ||
-                    (date.equals(exclusionStart)) || date.equals(exclusionEnd)) {
+            if ((date.after(startDate) && date.before(endDate)) ||
+                    (date.equals(startDate)) || date.equals(endDate)) {
                 return true;
             }
         } catch (ParseException e) {
@@ -173,7 +171,7 @@ public class Day {
         return false;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return mDate;
     }
 

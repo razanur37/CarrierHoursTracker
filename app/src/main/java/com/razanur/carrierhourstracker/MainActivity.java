@@ -15,7 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,8 +85,16 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+            Date date;
+            try {
+                date = sdf.parse(NewDayActivity.DATE_REPLY);
+            } catch (ParseException e) {
+                // We'll never be here
+                date = new Date();
+            }
             Day day = new Day(
-                    CarrierUtils.reverseDate(data.getStringExtra(NewDayActivity.DATE_REPLY)),
+                    date,
                     data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
                     data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
                     data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));

@@ -4,15 +4,19 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-@Database(entities = {Day.class}, version = 2)
+@Database(entities = {Day.class}, version = 3)
+@TypeConverters({Converters.class})
 public abstract class DayRoomDatabase extends RoomDatabase {
     public abstract DayDao dayDao();
 
     private static volatile DayRoomDatabase INSTANCE;
+
 
     static DayRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -22,6 +26,7 @@ public abstract class DayRoomDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             DayRoomDatabase.class, "day_database")
                             .addCallback(sRoomDatabaseCallback)
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

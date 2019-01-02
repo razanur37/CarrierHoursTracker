@@ -15,8 +15,10 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,7 +103,7 @@ public class NewDayActivity extends AppCompatActivity {
 
         double start;
         double end;
-        String date;
+        String dateString;
         boolean inputsVerified;
         boolean isNSDay = checkNSDay(nsDayGroup.getCheckedRadioButtonId());
 
@@ -114,10 +116,19 @@ public class NewDayActivity extends AppCompatActivity {
             return;
         }
 
-        date = dateText.getText().toString();
-        if (date.equals("")) {
+        dateString = dateText.getText().toString();
+        if (dateString.equals("")) {
             showToast("Enter a Date");
             return;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+        Date date;
+        try {
+            date = sdf.parse(dateString);
+        } catch (ParseException e) {
+            // Never here
+            date = new Date();
         }
 
         inputsVerified = verifyInputs(start, end, date);
@@ -125,7 +136,7 @@ public class NewDayActivity extends AppCompatActivity {
         Intent replyIntent = new Intent();
 
         if (inputsVerified) {
-            replyIntent.putExtra(DATE_REPLY, date);
+            replyIntent.putExtra(DATE_REPLY, dateString);
             replyIntent.putExtra(START_REPLY, start);
             replyIntent.putExtra(END_REPLY, end);
             replyIntent.putExtra(NSDAY_REPLY, isNSDay);
@@ -134,7 +145,7 @@ public class NewDayActivity extends AppCompatActivity {
         }
     }
 
-    private boolean verifyInputs(double start, double end, String date) {
+    private boolean verifyInputs(double start, double end, Date date) {
         // Verify inputs
         if (mDays.contains(Day.dateAsDay(date))) {
             showToast("Enter a Different Date From Ones Already Entered");
