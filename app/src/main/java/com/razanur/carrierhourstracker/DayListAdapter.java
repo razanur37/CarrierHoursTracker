@@ -53,7 +53,7 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             String format = "%.2f";
             Locale locale = Locale.US;
 
-            holder.mDate.setText(current.getDate());
+            holder.mDate.setText(CarrierUtils.unReverseDate(current.getDate()));
             holder.mStartTime.setText(String.format(locale, format, current.getStartTime()));
             holder.mEndTime.setText(String.format(locale, format, current.getEndTime()));
             holder.mHoursWorked.setText(String.format(locale, format, current.getHoursWorked()));

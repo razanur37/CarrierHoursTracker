@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Day day = new Day(
-                    data.getStringExtra(NewDayActivity.DATE_REPLY),
+                    CarrierUtils.reverseDate(data.getStringExtra(NewDayActivity.DATE_REPLY)),
                     data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
                     data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
                     data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));
