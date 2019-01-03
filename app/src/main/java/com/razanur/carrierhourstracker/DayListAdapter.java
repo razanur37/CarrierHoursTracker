@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,8 +53,9 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             Day current = mDays.get(position);
             String format = "%.2f";
             Locale locale = Locale.US;
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy", locale);
 
-            holder.mDate.setText(current.getDate().toString());
+            holder.mDate.setText(sdf.format(current.getDate()));
             holder.mStartTime.setText(String.format(locale, format, current.getStartTime()));
             holder.mEndTime.setText(String.format(locale, format, current.getEndTime()));
             holder.mHoursWorked.setText(String.format(locale, format, current.getHoursWorked()));

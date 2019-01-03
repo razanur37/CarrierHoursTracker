@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
             Date date;
             try {
-                date = sdf.parse(NewDayActivity.DATE_REPLY);
+                date = sdf.parse(data.getStringExtra(NewDayActivity.DATE_REPLY));
             } catch (ParseException e) {
                 // We'll never be here
                 date = new Date();
