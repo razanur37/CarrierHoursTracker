@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 date = Utils.SHORT_SDF.parse(data.getStringExtra(NewDayActivity.DATE_REPLY));
             } catch (ParseException e) {
-                // We'll never be here
+                // We'll never be here, so we don't need to worry, but just in case...
                 date = new Date();
             }
             Day day = new Day(
