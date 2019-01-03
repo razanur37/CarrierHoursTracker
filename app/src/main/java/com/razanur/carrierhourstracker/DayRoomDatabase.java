@@ -55,15 +55,15 @@ public abstract class DayRoomDatabase extends RoomDatabase {
     };
 
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-        private final DayDao mDao;
+        //private final DayDao mDao;
 
         PopulateDbAsync(DayRoomDatabase db) {
-            mDao = db.dayDao();
+            //mDao = db.dayDao();
         }
 
         @Override
         protected Void doInBackground(final Void... params) {
-            mDao.deleteAll();
+            //mDao.deleteAll();
             return null;
         }
     }
