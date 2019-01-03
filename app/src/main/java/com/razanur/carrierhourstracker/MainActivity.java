@@ -38,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
 
     private DayViewModel mDayViewModel;
-    private TextView totalHours;
+    private TextView totalStraightHours;
+    private TextView totalOvertimeHours;
+    private TextView totalPenaltyHours;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = findViewById(R.id.date_recycler_view);
-        totalHours = findViewById(R.id.total_hours);
+        totalStraightHours = findViewById(R.id.total_st_hours);
+        totalOvertimeHours = findViewById(R.id.total_ot_hours);
+        totalPenaltyHours = findViewById(R.id.total_vt_hours);
         final DayListAdapter adapter = new DayListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -58,13 +62,19 @@ public class MainActivity extends AppCompatActivity {
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
             public void onChanged(@Nullable List<Day> days) {
-                double total = 0.0;
+                double totalStraight = 0.0;
+                double totalOvertime = 0.0;
+                double totalPenalty = 0.0;
                 if (days != null) {
                     for (Day day : days) {
-                        total += day.getHoursWorked();
+                        totalStraight += day.getStraightTime();
+                        totalOvertime += day.getOvertime();
+                        totalPenalty += day.getPenalty();
                     }
                 }
-                totalHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, total));
+                totalStraightHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalStraight));
+                totalOvertimeHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalOvertime));
+                totalPenaltyHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalPenalty));
                 adapter.setDays(days);
             }
         });
