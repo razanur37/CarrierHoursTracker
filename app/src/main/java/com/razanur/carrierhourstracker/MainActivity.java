@@ -26,6 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.ParseException;
@@ -37,15 +38,17 @@ public class MainActivity extends AppCompatActivity {
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
 
     private DayViewModel mDayViewModel;
+    private TextView totalHours;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = findViewById(R.id.date_recycler_view);
+        totalHours = findViewById(R.id.total_hours);
         final DayListAdapter adapter = new DayListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
             public void onChanged(@Nullable List<Day> days) {
+                double total = 0.0;
+                if (days != null) {
+                    for (Day day : days) {
+                        total += day.getHoursWorked();
+                    }
+                }
+                totalHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, total));
                 adapter.setDays(days);
             }
         });

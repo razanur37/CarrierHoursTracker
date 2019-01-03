@@ -14,8 +14,5 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#003659</color>
-    <color name="colorPrimaryDark">#002137</color>
-    <color name="colorAccent">#ad2624</color>
-    <color name="divider">#696969</color>
+    <color name="ic_launcher_background">#003659</color>
 </resources>

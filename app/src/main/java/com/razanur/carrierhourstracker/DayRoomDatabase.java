@@ -59,11 +59,11 @@ public abstract class DayRoomDatabase extends RoomDatabase {
 
         PopulateDbAsync(DayRoomDatabase db) {
             mDao = db.dayDao();
-            mDao.deleteAll();
         }
 
         @Override
         protected Void doInBackground(final Void... params) {
+            mDao.deleteAll();
             return null;
         }
     }

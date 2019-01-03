@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright (c) 2019 Casey English
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="108dp"
+        android:height="108dp"
+        android:viewportWidth="42.857143"
+        android:viewportHeight="42.857143">
+    <group android:translateX="9.428572"
+            android:translateY="9.428572">
+      <path
+          android:pathData="M20,4L4,4c-1.1,0 -1.99,0.9 -1.99,2L2,18c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2L22,6c0,-1.1 -0.9,-2 -2,-2zM20,18L4,18L4,8l8,5 8,-5v10zM12,11L4,6h16l-8,5z"
+          android:fillColor="#ffffff"/>
+      <path
+          android:pathData="m11.9125,4.7933c-3.6221,0 -6.5552,3.1461 -6.5552,7.0225 0,3.8764 2.9331,7.0225 6.5552,7.0225 3.6287,0 6.5684,-3.1461 6.5684,-7.0225 0,-3.8764 -2.9397,-7.0225 -6.5684,-7.0225zM11.9191,17.4337c-2.9003,0 -5.2494,-2.514 -5.2494,-5.618 0,-3.1039 2.3491,-5.618 5.2494,-5.618 2.9003,0 5.2494,2.514 5.2494,5.618 0,3.1039 -2.3491,5.618 -5.2494,5.618z"
+          android:fillColor="#ad2624"
+          android:fillAlpha="1"/>
+      <path
+          android:pathData="m12.2472,8.3045h-0.9843v4.2135l3.4449,2.2121 0.4921,-0.8638 -2.9528,-1.875z"
+          android:strokeWidth="0.67882282"
+          android:fillColor="#ad2624"
+          android:fillAlpha="1"/>
+    </group>
+</vector>
