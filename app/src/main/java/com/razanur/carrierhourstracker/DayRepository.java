@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 
 import java.util.List;
 
-public class DayRepository {
+class DayRepository {
 
     private DayDao mDayDao;
     private LiveData<List<Day>> mAllDays;
@@ -21,11 +21,11 @@ public class DayRepository {
         return mAllDays;
     }
 
-    public void insert (Day day) {
+    void insert (Day day) {
         new insertAsyncTask(mDayDao).execute(day);
     }
 
-    public void clear() {
+    void clear() {
         new deleteAsyncTask(mDayDao).execute();
     }
 

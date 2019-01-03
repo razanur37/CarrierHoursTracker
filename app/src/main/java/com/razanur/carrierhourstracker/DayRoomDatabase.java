@@ -5,7 +5,6 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
-import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -47,6 +46,7 @@ public abstract class DayRoomDatabase extends RoomDatabase {
 
         PopulateDbAsync(DayRoomDatabase db) {
             mDao = db.dayDao();
+            mDao.deleteAll();
         }
 
         @Override

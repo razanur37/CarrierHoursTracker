@@ -6,10 +6,8 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 
 @Entity(tableName = "day_table")
@@ -42,7 +40,7 @@ public class Day {
         mPenalty = calcPenalty();
     }
 
-    private Day(Date date) {
+    private Day(@NonNull Date date) {
         mDate = date;
     }
 
@@ -110,10 +108,8 @@ public class Day {
     }
 
     private boolean determineIfExcluded(Date date) {
-        String format = "MM/dd/yyyy";
         String exclusionStart;
         String exclusionEnd;
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -123,42 +119,42 @@ public class Day {
         switch (cal.get(Calendar.DAY_OF_WEEK)) {
             case Calendar.SUNDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
-                exclusionStart = sdf.format(cal.getTime());
+                exclusionStart = Utils.SHORT_SDF.format(cal.getTime());
                 break;
             case Calendar.MONDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+5);
-                exclusionStart = sdf.format(cal.getTime());
+                exclusionStart = Utils.SHORT_SDF.format(cal.getTime());
                 break;
             case Calendar.TUESDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+4);
-                exclusionStart = sdf.format(cal.getTime());
+                exclusionStart = Utils.SHORT_SDF.format(cal.getTime());
                 break;
             case Calendar.WEDNESDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+3);
-                exclusionStart = sdf.format(cal.getTime());
+                exclusionStart = Utils.SHORT_SDF.format(cal.getTime());
                 break;
             case Calendar.THURSDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+2);
-                exclusionStart = sdf.format(cal.getTime());
+                exclusionStart = Utils.SHORT_SDF.format(cal.getTime());
                 break;
             case Calendar.FRIDAY:
                 cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
-                exclusionStart = sdf.format(cal.getTime());
+                exclusionStart = Utils.SHORT_SDF.format(cal.getTime());
                 break;
-            default:
-                exclusionStart = sdf.format(cal.getTime());
+            default: // Calendar.SATURDAY
+                exclusionStart = Utils.SHORT_SDF.format(cal.getTime());
                 break;
         }
 
         cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+27);
-        exclusionEnd = sdf.format(cal.getTime());
+        exclusionEnd = Utils.SHORT_SDF.format(cal.getTime());
 
         Date startDate;
         Date endDate;
 
         try {
-            startDate = sdf.parse(exclusionStart);
-            endDate = sdf.parse(exclusionEnd);
+            startDate = Utils.SHORT_SDF.parse(exclusionStart);
+            endDate = Utils.SHORT_SDF.parse(exclusionEnd);
 
             if ((date.after(startDate) && date.before(endDate)) ||
                     (date.equals(startDate)) || date.equals(endDate)) {
@@ -175,55 +171,55 @@ public class Day {
         return mDate;
     }
 
-    public boolean isNsDay() {
+    boolean isNsDay() {
         return mNsDay;
     }
 
-    public double getStartTime() {
+    double getStartTime() {
         return mStartTime;
     }
 
-    public double getEndTime() {
+    double getEndTime() {
         return mEndTime;
     }
 
-    public boolean isExcluded() {
+    boolean isExcluded() {
         return mExcluded;
     }
 
-    public void setExcluded(boolean excluded) {
+    void setExcluded(boolean excluded) {
         mExcluded = excluded;
     }
 
-    public double getHoursWorked() {
+    double getHoursWorked() {
         return mHoursWorked;
     }
 
-    public void setHoursWorked(double hoursWorked) {
+    void setHoursWorked(double hoursWorked) {
         mHoursWorked = hoursWorked;
     }
 
-    public double getStraightTime() {
+    double getStraightTime() {
         return mStraightTime;
     }
 
-    public void setStraightTime(double straightTime) {
+    void setStraightTime(double straightTime) {
         mStraightTime = straightTime;
     }
 
-    public double getOvertime() {
+    double getOvertime() {
         return mOvertime;
     }
 
-    public void setOvertime(double overtime) {
+    void setOvertime(double overtime) {
         mOvertime = overtime;
     }
 
-    public double getPenalty() {
+    double getPenalty() {
         return mPenalty;
     }
 
-    public void setPenalty(double penalty) {
+    void setPenalty(double penalty) {
         mPenalty = penalty;
     }
 }

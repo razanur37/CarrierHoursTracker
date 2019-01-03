@@ -16,11 +16,9 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class NewDayActivity extends AppCompatActivity {
 
@@ -35,8 +33,6 @@ public class NewDayActivity extends AppCompatActivity {
     private RadioGroup nsDayGroup;
     private List<Day> mDays;
 
-    private DayViewModel mDayViewModel;
-
     final Calendar myCalendar = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener dateListener;
 
@@ -50,7 +46,7 @@ public class NewDayActivity extends AppCompatActivity {
         dateText = findViewById(R.id.et_date);
         nsDayGroup = findViewById(R.id.ns_day_group);
 
-        mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
+        DayViewModel mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
@@ -90,10 +86,7 @@ public class NewDayActivity extends AppCompatActivity {
     }
 
     private void updateLabel() {
-        String format = "MM/dd/yyyy";
-        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
-
-        dateText.setText(sdf.format(myCalendar.getTime()));
+        dateText.setText(Utils.SHORT_SDF.format(myCalendar.getTime()));
     }
 
     public void setTotals(View v) {
@@ -122,10 +115,9 @@ public class NewDayActivity extends AppCompatActivity {
             return;
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
         Date date;
         try {
-            date = sdf.parse(dateString);
+            date = Utils.SHORT_SDF.parse(dateString);
         } catch (ParseException e) {
             // Never here
             date = new Date();

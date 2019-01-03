@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewHolder> {
 
@@ -51,18 +49,15 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
     public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
         if (mDays != null) {
             Day current = mDays.get(position);
-            String format = "%.2f";
-            Locale locale = Locale.US;
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy", locale);
 
-            holder.mDate.setText(sdf.format(current.getDate()));
-            holder.mStartTime.setText(String.format(locale, format, current.getStartTime()));
-            holder.mEndTime.setText(String.format(locale, format, current.getEndTime()));
-            holder.mHoursWorked.setText(String.format(locale, format, current.getHoursWorked()));
-            holder.mOvertime.setText(String.format(locale, format, current.getOvertime()));
-            holder.mPenalty.setText(String.format(locale, format, current.getPenalty()));
+            holder.mDate.setText(Utils.LONG_SDF.format(current.getDate()));
+            holder.mStartTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getStartTime()));
+            holder.mEndTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getEndTime()));
+            holder.mHoursWorked.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getHoursWorked()));
+            holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getOvertime()));
+            holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getPenalty()));
         } else {
-            holder.mDate.setText("No Days");
+            holder.mDate.setText("");
         }
     }
 
