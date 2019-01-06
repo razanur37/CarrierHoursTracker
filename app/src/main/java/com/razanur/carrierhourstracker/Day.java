@@ -86,7 +86,7 @@ public class Day {
 
     private double calcHoursWorked() {
         double hoursWorked = determineLunch(mEndTime - mStartTime);
-        if (!mNsDay && 7.92 <= hoursWorked && hoursWorked < 8.0)
+        if (!mNsDay && 7.92 <= hoursWorked && hoursWorked <= 8.08)
             return 8.0;
         else
             return hoursWorked;
