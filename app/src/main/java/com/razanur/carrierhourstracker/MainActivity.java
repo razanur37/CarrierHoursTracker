@@ -33,7 +33,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DayListAdapter.OnItemLongClickListener{
 
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
 
@@ -137,4 +137,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onItemLongClicked(Day day) {
+        mDayViewModel.delete(day);
+        return true;
+    }
 }
