@@ -37,6 +37,10 @@ class DayRepository {
         new insertAsyncTask(mDayDao).execute(day);
     }
 
+    void update(Day day) {
+        new updateAsyncTask(mDayDao).execute(day);
+    }
+
     void delete(Day day) {
         new deleteSingleAsyncTask(mDayDao).execute(day);
     }
@@ -56,6 +60,21 @@ class DayRepository {
         @Override
         protected Void doInBackground(final Day... params) {
             mAsyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
+    private static class updateAsyncTask extends AsyncTask<Day, Void, Void> {
+
+        private DayDao mAsyncTaskDao;
+
+        updateAsyncTask(DayDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(Day... params) {
+            mAsyncTaskDao.update(params[0]);
             return null;
         }
     }

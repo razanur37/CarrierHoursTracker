@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        if ((requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE || requestCode == EDIT_DAY_ACTIVITY_REQUEST_CODE)
+                && resultCode == RESULT_OK) {
             Date date;
             try {
                 date = Utils.SHORT_SDF.parse(data.getStringExtra(NewDayActivity.DATE_REPLY));
@@ -134,7 +135,10 @@ public class MainActivity extends AppCompatActivity
                     data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
                     data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
                     data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));
-            mDayViewModel.insert(day);
+            if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE)
+                mDayViewModel.insert(day);
+            else
+                mDayViewModel.update(day);
         } else {
             Toast.makeText(
                     getApplicationContext(),
