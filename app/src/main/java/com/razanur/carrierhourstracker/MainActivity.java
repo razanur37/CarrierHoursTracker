@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,9 +34,14 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements DayListAdapter.OnItemClickListener,
+        DayListAdapter.OnItemLongClickListener,
+        DeleteDialogFragment.DeleteDialogListener {
 
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
+    public static final int EDIT_DAY_ACTIVITY_REQUEST_CODE = 2;
+    public static final long DELETE_ALL_CONFIRM_ID = -1;
 
     private DayViewModel mDayViewModel;
     private TextView totalStraightHours;
@@ -105,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_clear) {
-            mDayViewModel.clear();
+            showDeleteDialog();
             return true;
         }
 
@@ -115,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        if ((requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE || requestCode == EDIT_DAY_ACTIVITY_REQUEST_CODE)
+                && resultCode == RESULT_OK) {
             Date date;
             try {
                 date = Utils.SHORT_SDF.parse(data.getStringExtra(NewDayActivity.DATE_REPLY));
@@ -128,7 +135,10 @@ public class MainActivity extends AppCompatActivity {
                     data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
                     data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
                     data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));
-            mDayViewModel.insert(day);
+            if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE)
+                mDayViewModel.insert(day);
+            else
+                mDayViewModel.update(day);
         } else {
             Toast.makeText(
                     getApplicationContext(),
@@ -137,4 +147,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onItemClicked(Day day) {
+        Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
+        intent.putExtra("date", Converters.dateToTimestamp(day.getDate()));
+        intent.putExtra("start", day.getStartTime());
+        intent.putExtra("end", day.getEndTime());
+        intent.putExtra("nsday", day.isNsDay());
+        startActivityForResult(intent, EDIT_DAY_ACTIVITY_REQUEST_CODE);
+    }
+
+    @Override
+    public boolean onItemLongClicked(Day day) {
+        showDeleteDialog(day);
+        return true;
+    }
+
+    public void showDeleteDialog() {
+        DialogFragment dialog = DeleteDialogFragment.newInstance(DELETE_ALL_CONFIRM_ID);
+        dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
+    }
+
+    public void showDeleteDialog(Day day) {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = DeleteDialogFragment.newInstance(Converters.dateToTimestamp(day.getDate()));
+        dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, long id) {
+        Day day = Day.dateAsDay(Converters.fromTimestamp(id));
+        if (id == DELETE_ALL_CONFIRM_ID)
+            mDayViewModel.clear();
+        else
+            mDayViewModel.delete(day);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // Do nothing
+    }
 }

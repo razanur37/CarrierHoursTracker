@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -46,18 +47,32 @@ public class NewDayActivity extends AppCompatActivity {
     private RadioGroup nsDayGroup;
     private List<Day> mDays;
 
+    private Bundle args;
+
     final Calendar myCalendar = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener dateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        args = getIntent().getExtras();
         setContentView(R.layout.activity_new_day);
 
         startTime = findViewById(R.id.et_start_time);
         endTime = findViewById(R.id.et_end_time);
         dateText = findViewById(R.id.et_date);
         nsDayGroup = findViewById(R.id.ns_day_group);
+
+        if (args != null) {
+            startTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, args.getDouble("start")));
+            endTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, args.getDouble("end")));
+            if (args.getBoolean("nsday"))
+                nsDayGroup.check(R.id.rb_ns_yes);
+            Date date = Converters.fromTimestamp(args.getLong("date"));
+            dateText.setText(Utils.SHORT_SDF.format(date));
+            Button button = findViewById(R.id.button_submit);
+            button.setText(R.string.update);
+        }
 
         DayViewModel mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
@@ -152,7 +167,10 @@ public class NewDayActivity extends AppCompatActivity {
 
     private boolean verifyInputs(double start, double end, Date date) {
         // Verify inputs
-        if (mDays.contains(Day.dateAsDay(date))) {
+        if (mDays.contains(Day.dateAsDay(date))
+                && args != null
+                && !date.equals(Converters.fromTimestamp(args.getLong("date"))))
+        {
             showToast("Enter a Different Date From Ones Already Entered");
             return false;
         }
