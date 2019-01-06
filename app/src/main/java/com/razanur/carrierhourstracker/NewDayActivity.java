@@ -52,12 +52,22 @@ public class NewDayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle args = getIntent().getExtras();
         setContentView(R.layout.activity_new_day);
 
         startTime = findViewById(R.id.et_start_time);
         endTime = findViewById(R.id.et_end_time);
         dateText = findViewById(R.id.et_date);
         nsDayGroup = findViewById(R.id.ns_day_group);
+
+        if (args != null) {
+            startTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, args.getDouble("start")));
+            endTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, args.getDouble("end")));
+            if (args.getBoolean("nsday"))
+                nsDayGroup.check(R.id.rb_ns_yes);
+            Date date = Converters.fromTimestamp(args.getLong("date"));
+            dateText.setText(Utils.SHORT_SDF.format(date));
+        }
 
         DayViewModel mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 

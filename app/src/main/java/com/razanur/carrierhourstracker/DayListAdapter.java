@@ -26,6 +26,10 @@ import java.util.List;
 
 public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewHolder> {
 
+    public interface OnItemClickListener {
+        void onItemClicked(Day day);
+    }
+
     public interface OnItemLongClickListener {
         boolean onItemLongClicked(Day day);
     }
@@ -75,6 +79,12 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getOvertime()));
             holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getPenalty()));
 
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) mInflater.getContext()).onItemClicked(current);
+                }
+            });
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
