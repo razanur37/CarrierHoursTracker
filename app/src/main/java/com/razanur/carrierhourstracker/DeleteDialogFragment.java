@@ -54,13 +54,18 @@ public class DeleteDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Build the dialog and set up the button click handlers
-        final long date = getArguments().getLong("date");
+        final long id = getArguments().getLong("id");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Delete Entry?")
+        String message;
+        if (id == MainActivity.DELETE_ALL_CONFIRM_ID)
+            message = "Delete All Entries?";
+        else
+            message = "Delete Entry?";
+        builder.setMessage(message)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Send the positive button event back to the host activity
-                        mListener.onDialogPositiveClick(DeleteDialogFragment.this, date);
+                        mListener.onDialogPositiveClick(DeleteDialogFragment.this, id);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -72,11 +77,11 @@ public class DeleteDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    public static DeleteDialogFragment newInstance(Day day) {
+    public static DeleteDialogFragment newInstance(Long id) {
         DeleteDialogFragment fragment = new DeleteDialogFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putLong("date", Converters.dateToTimestamp(day.getDate()));
+        bundle.putLong("id", id);
 
         fragment.setArguments(bundle);
 

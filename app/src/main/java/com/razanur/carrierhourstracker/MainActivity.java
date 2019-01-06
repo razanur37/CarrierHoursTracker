@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         DeleteDialogFragment.DeleteDialogListener {
 
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
+    public static final long DELETE_ALL_CONFIRM_ID = -1;
 
     private DayViewModel mDayViewModel;
     private TextView totalStraightHours;
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_clear) {
-            mDayViewModel.clear();
+            showDeleteDialog();
             return true;
         }
 
@@ -146,16 +147,24 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void showDeleteDialog() {
+        DialogFragment dialog = DeleteDialogFragment.newInstance(DELETE_ALL_CONFIRM_ID);
+        dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
+    }
+
     public void showDeleteDialog(Day day) {
         // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = DeleteDialogFragment.newInstance(day);
+        DialogFragment dialog = DeleteDialogFragment.newInstance(Converters.dateToTimestamp(day.getDate()));
         dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, long date) {
-        Day day = Day.dateAsDay(Converters.fromTimestamp(date));
-        mDayViewModel.delete(day);
+    public void onDialogPositiveClick(DialogFragment dialog, long id) {
+        Day day = Day.dateAsDay(Converters.fromTimestamp(id));
+        if (id == DELETE_ALL_CONFIRM_ID)
+            mDayViewModel.clear();
+        else
+            mDayViewModel.delete(day);
     }
 
     @Override
