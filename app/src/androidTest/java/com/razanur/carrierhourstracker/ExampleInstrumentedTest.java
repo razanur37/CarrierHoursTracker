@@ -14,12 +14,18 @@
 
 package com.razanur.carrierhourstracker;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.arch.persistence.db.framework.FrameworkSQLiteOpenHelperFactory;
+import android.arch.persistence.room.testing.MigrationTestHelper;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,3 +44,4 @@ public class ExampleInstrumentedTest {
         assertEquals("com.razanur.carrierhourstracker", appContext.getPackageName());
     }
 }
+

@@ -26,7 +26,9 @@ import java.util.Date;
 @Entity(tableName = "day_table")
 public class Day {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    private int rowID;
+
     @NonNull
     @ColumnInfo(name = "date")
     private Date mDate;
@@ -182,6 +184,14 @@ public class Day {
             // sdf.format(), so we'll never get here.
         }
         return false;
+    }
+
+    public int getRowID() {
+        return rowID;
+    }
+
+    public void setRowID(int id) {
+        rowID = id;
     }
 
     public Date getDate() {
