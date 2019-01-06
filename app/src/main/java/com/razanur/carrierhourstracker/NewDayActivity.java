@@ -47,7 +47,8 @@ public class NewDayActivity extends AppCompatActivity {
     private RadioGroup nsDayGroup;
     private List<Day> mDays;
 
-    private Bundle args;
+    private Intent intent;
+    private Day oldDay;
 
     final Calendar myCalendar = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener dateListener;
@@ -55,7 +56,7 @@ public class NewDayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        args = getIntent().getExtras();
+        intent = getIntent();
         setContentView(R.layout.activity_new_day);
 
         startTime = findViewById(R.id.et_start_time);
@@ -63,12 +64,13 @@ public class NewDayActivity extends AppCompatActivity {
         dateText = findViewById(R.id.et_date);
         nsDayGroup = findViewById(R.id.ns_day_group);
 
-        if (args != null) {
-            startTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, args.getDouble("start")));
-            endTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, args.getDouble("end")));
-            if (args.getBoolean("nsday"))
+        oldDay = intent.getParcelableExtra("day");
+        if (oldDay != null) {
+            startTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, oldDay.getStartTime()));
+            endTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, oldDay.getEndTime()));
+            if (oldDay.isNsDay())
                 nsDayGroup.check(R.id.rb_ns_yes);
-            Date date = Converters.fromTimestamp(args.getLong("date"));
+            Date date = oldDay.getDate();
             dateText.setText(Utils.SHORT_SDF.format(date));
             Button button = findViewById(R.id.button_submit);
             button.setText(R.string.update);
@@ -156,10 +158,14 @@ public class NewDayActivity extends AppCompatActivity {
         Intent replyIntent = new Intent();
 
         if (inputsVerified) {
-            replyIntent.putExtra(DATE_REPLY, dateString);
-            replyIntent.putExtra(START_REPLY, start);
-            replyIntent.putExtra(END_REPLY, end);
-            replyIntent.putExtra(NSDAY_REPLY, isNSDay);
+            Day day;
+            if (oldDay != null) {
+                // We're editing
+                day = new Day(oldDay, date, start, end, isNSDay);
+            } else {
+                day = new Day(date, start, end, isNSDay);
+            }
+            replyIntent.putExtra("day", day);
             setResult(RESULT_OK, replyIntent);
             finish();
         }
@@ -167,12 +173,20 @@ public class NewDayActivity extends AppCompatActivity {
 
     private boolean verifyInputs(double start, double end, Date date) {
         // Verify inputs
-        if (mDays.contains(Day.dateAsDay(date))
-                && args != null
-                && !date.equals(Converters.fromTimestamp(args.getLong("date"))))
-        {
-            showToast("Enter a Different Date From Ones Already Entered");
-            return false;
+        if (mDays.contains(Day.dateAsDay(date))) {
+            // Date exists, check if we're editing or adding
+            if (oldDay != null) {
+                // We're editing, check if the date matches an existing date because that's the
+                // date we're editing.
+                if (!date.equals((oldDay.getDate()))) {
+                    showToast("Enter a Different Date From Ones Already Entered");
+                    return false;
+                }
+            } else {
+                // We're adding, the date can't exist
+                showToast("Enter a Different Date From Ones Already Entered");
+                return false;
+            }
         }
 
         if (start >= 24.0 || end >= 24.0) {

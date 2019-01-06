@@ -15,7 +15,10 @@ package com.razanur.carrierhourstracker;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.text.ParseException;
@@ -24,7 +27,7 @@ import java.util.Date;
 
 
 @Entity(tableName = "day_table")
-public class Day {
+public class Day implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private int rowID;
@@ -55,9 +58,65 @@ public class Day {
         mPenalty = calcPenalty();
     }
 
+    public Day(@NonNull Day day, @NonNull Date date, double startTime, double endTime, boolean nsDay) {
+        rowID = day.getRowID();
+        mDate = date;
+        mStartTime = startTime;
+        mEndTime = endTime;
+        mNsDay = nsDay;
+        mExcluded = determineIfExcluded(date);
+        mHoursWorked = calcHoursWorked();
+        mStraightTime = calcStraightTime();
+        mOvertime = calcOvertime();
+        mPenalty = calcPenalty();
+    }
+
     private Day(@NonNull Date date) {
         mDate = date;
     }
+
+    private Day(Parcel in) {
+        rowID = in.readInt();
+        mDate = Converters.fromTimestamp(in.readLong());
+        mStartTime = in.readDouble();
+        mEndTime = in.readDouble();
+        mNsDay = in.readInt() == 1;
+        mExcluded = in.readInt() == 1;
+        mHoursWorked = in.readDouble();
+        mStraightTime = in.readDouble();
+        mOvertime = in.readDouble();
+        mPenalty = in.readDouble();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(rowID);
+        dest.writeLong(Converters.dateToTimestamp(mDate));
+        dest.writeDouble(mStartTime);
+        dest.writeDouble(mEndTime);
+        dest.writeInt(mNsDay ? 1 : 0);
+        dest.writeInt(mExcluded ? 1 : 0);
+        dest.writeDouble(mHoursWorked);
+        dest.writeDouble(mStraightTime);
+        dest.writeDouble(mOvertime);
+        dest.writeDouble(mPenalty);
+    }
+
+    @Ignore
+    public static final Parcelable.Creator<Day> CREATOR = new Parcelable.Creator<Day>() {
+        public Day createFromParcel(Parcel in) {
+            return new Day(in);
+        }
+
+        public Day[] newArray(int size) {
+            return new Day[size];
+        }
+    };
 
     static Day dateAsDay(Date date) {
         return new Day(date);

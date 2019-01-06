@@ -28,7 +28,8 @@ public class DeleteDialogFragment extends DialogFragment {
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface DeleteDialogListener {
-        void onDialogPositiveClick(DialogFragment dialog, long date);
+        void onDialogPositiveClick(DialogFragment dialog, long id);
+        void onDialogPositiveClick(DialogFragment dialog, Day day);
         void onDialogNegativeClick(DialogFragment dialog);
     }
 
@@ -54,26 +55,45 @@ public class DeleteDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Build the dialog and set up the button click handlers
-        final long id = getArguments().getLong("id");
+        Bundle bundle = getArguments();
+
+        final long code = bundle.getLong("id");
+        final Day day = bundle.getParcelable("day");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         String message;
-        if (id == MainActivity.DELETE_ALL_CONFIRM_ID)
+        if (day == null) {
             message = "Delete All Entries?";
-        else
+            builder.setMessage(message)
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Send the positive button event back to the host activity
+                            mListener.onDialogPositiveClick(DeleteDialogFragment.this, code);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Send the negative button event back to the host activity
+                            mListener.onDialogNegativeClick(DeleteDialogFragment.this);
+                        }
+                    });
+        }
+        else {
             message = "Delete Entry?";
-        builder.setMessage(message)
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Send the positive button event back to the host activity
-                        mListener.onDialogPositiveClick(DeleteDialogFragment.this, id);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Send the negative button event back to the host activity
-                        mListener.onDialogNegativeClick(DeleteDialogFragment.this);
-                    }
-                });
+            builder.setMessage(message)
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Send the positive button event back to the host activity
+                            mListener.onDialogPositiveClick(DeleteDialogFragment.this, day);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Send the negative button event back to the host activity
+                            mListener.onDialogNegativeClick(DeleteDialogFragment.this);
+                        }
+                    });
+        }
+
         return builder.create();
     }
 
@@ -82,6 +102,17 @@ public class DeleteDialogFragment extends DialogFragment {
 
         Bundle bundle = new Bundle();
         bundle.putLong("id", id);
+
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
+    public static DeleteDialogFragment newInstance(Day day) {
+        DeleteDialogFragment fragment = new DeleteDialogFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("day", day);
 
         fragment.setArguments(bundle);
 
