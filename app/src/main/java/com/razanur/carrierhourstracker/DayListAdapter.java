@@ -20,10 +20,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewHolder> {
+
+    public interface OnItemLongClickListener {
+        boolean onItemLongClicked(Day day);
+    }
 
     class DayViewHolder extends RecyclerView.ViewHolder {
         private final TextView mDate;
@@ -59,9 +64,9 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull DayViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DayViewHolder holder, final int position) {
         if (mDays != null) {
-            Day current = mDays.get(position);
+            final Day current = mDays.get(position);
 
             holder.mDate.setText(Utils.LONG_SDF.format(current.getDate()));
             holder.mStartTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getStartTime()));
@@ -69,6 +74,14 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             holder.mHoursWorked.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getHoursWorked()));
             holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getOvertime()));
             holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getPenalty()));
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    ((MainActivity) mInflater.getContext()).onItemLongClicked(current);
+                    return true;
+                }
+            });
         } else {
             holder.mDate.setText("");
         }

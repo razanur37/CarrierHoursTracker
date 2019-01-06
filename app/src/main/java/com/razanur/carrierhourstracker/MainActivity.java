@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +34,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements DayListAdapter.OnItemLongClickListener,
+        DeleteDialogFragment.DeleteDialogListener {
 
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
 
@@ -137,4 +140,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onItemLongClicked(Day day) {
+        showDeleteDialog(day);
+        return true;
+    }
+
+    public void showDeleteDialog(Day day) {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = DeleteDialogFragment.newInstance(day);
+        dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, long date) {
+        Day day = Day.dateAsDay(Converters.fromTimestamp(date));
+        mDayViewModel.delete(day);
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // Do nothing
+    }
 }

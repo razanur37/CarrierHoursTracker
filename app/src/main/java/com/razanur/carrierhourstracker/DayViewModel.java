@@ -38,6 +38,10 @@ public class DayViewModel extends AndroidViewModel {
         mRepository.insert(day);
     }
 
+    void delete(Day day) {
+        mRepository.delete(day);
+    }
+
     void clear() {
         mRepository.clear();
     }
