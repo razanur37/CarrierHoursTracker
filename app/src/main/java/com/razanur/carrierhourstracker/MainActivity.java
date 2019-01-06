@@ -35,10 +35,12 @@ import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements DayListAdapter.OnItemLongClickListener,
+        implements DayListAdapter.OnItemClickListener,
+        DayListAdapter.OnItemLongClickListener,
         DeleteDialogFragment.DeleteDialogListener {
 
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
+    public static final int EDIT_DAY_ACTIVITY_REQUEST_CODE = 2;
     public static final long DELETE_ALL_CONFIRM_ID = -1;
 
     private DayViewModel mDayViewModel;
@@ -119,7 +121,8 @@ public class MainActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+        if ((requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE || requestCode == EDIT_DAY_ACTIVITY_REQUEST_CODE)
+                && resultCode == RESULT_OK) {
             Date date;
             try {
                 date = Utils.SHORT_SDF.parse(data.getStringExtra(NewDayActivity.DATE_REPLY));
@@ -132,13 +135,26 @@ public class MainActivity extends AppCompatActivity
                     data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
                     data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
                     data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));
-            mDayViewModel.insert(day);
+            if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE)
+                mDayViewModel.insert(day);
+            else
+                mDayViewModel.update(day);
         } else {
             Toast.makeText(
                     getApplicationContext(),
                     R.string.empty_not_saved,
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void onItemClicked(Day day) {
+        Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
+        intent.putExtra("date", Converters.dateToTimestamp(day.getDate()));
+        intent.putExtra("start", day.getStartTime());
+        intent.putExtra("end", day.getEndTime());
+        intent.putExtra("nsday", day.isNsDay());
+        startActivityForResult(intent, EDIT_DAY_ACTIVITY_REQUEST_CODE);
     }
 
     @Override
