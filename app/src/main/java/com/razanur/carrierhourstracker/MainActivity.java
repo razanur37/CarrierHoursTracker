@@ -123,18 +123,8 @@ public class MainActivity extends AppCompatActivity
 
         if ((requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE || requestCode == EDIT_DAY_ACTIVITY_REQUEST_CODE)
                 && resultCode == RESULT_OK) {
-            Date date;
-            try {
-                date = Utils.SHORT_SDF.parse(data.getStringExtra(NewDayActivity.DATE_REPLY));
-            } catch (ParseException e) {
-                // We'll never be here, so we don't need to worry, but just in case...
-                date = new Date();
-            }
-            Day day = new Day(
-                    date,
-                    data.getDoubleExtra(NewDayActivity.START_REPLY, 0.0),
-                    data.getDoubleExtra(NewDayActivity.END_REPLY,  0.0),
-                    data.getBooleanExtra(NewDayActivity.NSDAY_REPLY, false));
+            Day day = data.getParcelableExtra("day");
+
             if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE)
                 mDayViewModel.insert(day);
             else
@@ -150,10 +140,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemClicked(Day day) {
         Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
-        intent.putExtra("date", Converters.dateToTimestamp(day.getDate()));
-        intent.putExtra("start", day.getStartTime());
-        intent.putExtra("end", day.getEndTime());
-        intent.putExtra("nsday", day.isNsDay());
+        intent.putExtra("day", day);
         startActivityForResult(intent, EDIT_DAY_ACTIVITY_REQUEST_CODE);
     }
 
@@ -170,17 +157,18 @@ public class MainActivity extends AppCompatActivity
 
     public void showDeleteDialog(Day day) {
         // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = DeleteDialogFragment.newInstance(Converters.dateToTimestamp(day.getDate()));
+        DialogFragment dialog = DeleteDialogFragment.newInstance(day);
         dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, long id) {
-        Day day = Day.dateAsDay(Converters.fromTimestamp(id));
-        if (id == DELETE_ALL_CONFIRM_ID)
-            mDayViewModel.clear();
-        else
-            mDayViewModel.delete(day);
+        mDayViewModel.clear();
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog, Day day) {
+        mDayViewModel.delete(day);
     }
 
     @Override
