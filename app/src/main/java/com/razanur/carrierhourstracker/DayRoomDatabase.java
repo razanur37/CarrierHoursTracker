@@ -18,17 +18,41 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-@Database(entities = {Day.class}, version = 3)
+@Database(entities = {Day.class}, version = 4)
 @TypeConverters({Converters.class})
 public abstract class DayRoomDatabase extends RoomDatabase {
     public abstract DayDao dayDao();
 
     private static volatile DayRoomDatabase INSTANCE;
 
+    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS day_table_copy " +
+                    "(`rowID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "date INTEGER NOT NULL, " +
+                    "mStartTime REAL NOT NULL, " +
+                    "mEndTime REAL NOT NULL, " +
+                    "mNsDay INTEGER NOT NULL, " +
+                    "mExcluded INTEGER NOT NULL, " +
+                    "mHoursWorked REAL NOT NULL, " +
+                    "mStraightTime REAL NOT NULL, " +
+                    "mOvertime REAL NOT NULL, " +
+                    "mPenalty REAL NOT NULL);");
+
+            database.execSQL("INSERT INTO day_table_copy (date, mStartTime, mEndTime, mNsDay, mExcluded, mHoursWorked, mStraightTime, mOvertime, mPenalty)" +
+                    "SELECT date, mStartTime, mEndTime, mNsDay, mExcluded, mHoursWorked, mStraightTime, mOvertime, mPenalty FROM day_table;");
+
+            database.execSQL("DROP TABLE day_table;");
+            database.execSQL("ALTER TABLE day_table_copy RENAME TO day_table;");
+        }
+    };
 
     static DayRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -38,7 +62,7 @@ public abstract class DayRoomDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             DayRoomDatabase.class, "day_database")
                             .addCallback(sRoomDatabaseCallback)
-                            .fallbackToDestructiveMigration()
+                            .addMigrations(MIGRATION_3_4)
                             .build();
                 }
             }
