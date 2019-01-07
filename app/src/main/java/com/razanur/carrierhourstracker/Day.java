@@ -257,6 +257,10 @@ public class Day implements Parcelable {
         return mDate;
     }
 
+    public void setDate(Date date) {
+        mDate = date;
+    }
+
     boolean isNsDay() {
         return mNsDay;
     }
