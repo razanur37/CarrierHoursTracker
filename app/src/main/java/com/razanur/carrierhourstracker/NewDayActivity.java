@@ -14,13 +14,13 @@
 package com.razanur.carrierhourstracker;
 
 import android.app.DatePickerDialog;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -36,18 +36,12 @@ import java.util.List;
 
 public class NewDayActivity extends AppCompatActivity {
 
-    public static final String DATE_REPLY = "com.razanur.carrierhourstracker.daylistsql.DATE";
-    public static final String START_REPLY = "com.razanur.carrierhourstracker.daylistsql.START";
-    public static final String END_REPLY = "com.razanur.carrierhourstracker.daylistsql.END";
-    public static final String NSDAY_REPLY = "com.razanur.carrierhourstracker.daylistsql.NSDAY";
-
     private EditText startTime;
     private EditText endTime;
     private EditText dateText;
     private RadioGroup nsDayGroup;
     private List<Day> mDays;
 
-    private Intent intent;
     private Day oldDay;
 
     final Calendar myCalendar = Calendar.getInstance();
@@ -56,7 +50,7 @@ public class NewDayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        intent = getIntent();
+        Intent intent = getIntent();
         setContentView(R.layout.activity_new_day);
 
         startTime = findViewById(R.id.et_start_time);
