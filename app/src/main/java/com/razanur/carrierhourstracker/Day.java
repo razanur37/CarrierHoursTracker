@@ -168,14 +168,14 @@ public class Day implements Parcelable {
     }
 
     private double calcOvertime() {
-        if (!mNsDay) {
-            if (!mExcluded)
+        if (!mExcluded) {
+            if (!mNsDay)
                 return Math.min(mHoursWorked - mStraightTime, 2.0);
             else
-                return mHoursWorked-mStraightTime;
+                return Math.min(mHoursWorked, 8.0);
         }
-        else
-           return Math.min(mHoursWorked, 8.0);
+
+        return mHoursWorked-mStraightTime;
     }
 
     private double calcPenalty() {
@@ -259,6 +259,13 @@ public class Day implements Parcelable {
 
     public void setDate(Date date) {
         mDate = date;
+        boolean excluded = determineIfExcluded(date);
+        if (mExcluded != excluded) {
+            mExcluded = excluded;
+            mStraightTime = calcStraightTime();
+            mOvertime = calcOvertime();
+            mPenalty = calcPenalty();
+        }
     }
 
     boolean isNsDay() {

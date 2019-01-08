@@ -33,11 +33,11 @@ public class DeleteDialogFragment extends DialogFragment {
     }
 
     // Use this instance of the interface to deliver action events
-    DeleteDialogListener mListener;
+    private DeleteDialogListener mListener;
 
     // Override the Fragment.onAttach() method to instantiate the DeleteDialogListener
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         // Verify that the host activity implements the callback interface
         try {
