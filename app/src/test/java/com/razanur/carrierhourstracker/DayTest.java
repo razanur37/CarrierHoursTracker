@@ -32,7 +32,7 @@ public class DayTest {
     private static final boolean isNsDay = false;
 
     @Before
-    public void setDate() {
+    public void setDates() {
         try {
             String dateString = "06/01/2019";
             String decDateString = "12/15/2019";

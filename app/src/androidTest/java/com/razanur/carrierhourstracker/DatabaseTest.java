@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,14 +33,19 @@ import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
     private DayDao mDayDao;
     private DayRoomDatabase mDb;
+
+    private static Date date;
+    private static Date decDate;
+    private static Date janDate;
+    private static final double start = 7.0;
+    private static final double end = 18.0;
+    private static final boolean isNsDay = false;
 
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
@@ -53,6 +59,20 @@ public class DatabaseTest {
         mDayDao = mDb.dayDao();
     }
 
+    @Before
+    public void setDates() {
+        try {
+            String dateString = "06/01/2019";
+            String decDateString = "12/15/2019";
+            String janDateString = "01/15/2019";
+            date = Utils.SHORT_SDF.parse(dateString);
+            decDate = Utils.SHORT_SDF.parse(decDateString);
+            janDate = Utils.SHORT_SDF.parse(janDateString);
+        } catch (ParseException e) {
+            // Never here
+        }
+    }
+
     @After
     public void closeDb() throws IOException {
         mDb.close();
@@ -61,41 +81,58 @@ public class DatabaseTest {
     @Test
     public void readEmptyTable() throws Exception {
         List<Day> days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
-        assertTrue(days.isEmpty());
+        assertThat(days).isEmpty();
     }
 
     @Test
     public void writeDayAndCheckSize() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        Day day = new Day(date, 7.0, 18.0, false);
+        Day day = new Day(date, start, end, isNsDay);
         mDayDao.insert(day);
         List<Day> days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
-        assertThat(days.size(), equalTo(1));
+        assertThat(days).hasSize(1);
     }
 
     @Test
     public void writeDayAndReadFromList() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        Day day = new Day(date, 7.0, 18.0, false);
+        Day day = new Day(date, start, end, isNsDay);
         mDayDao.insert(day);
         List<Day> days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
-        assertThat(days.get(0), equalTo(day));
+        assertThat(days.get(0)).isEqualTo(day);
     }
 
     @Test
     public void updateDay() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        Day day = new Day(date, 7.0, 18.0, false);
+        Day day = new Day(date, start, end, isNsDay);
         mDayDao.insert(day);
-        cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
-        date = cal.getTime();
-        day = LiveDataTestUtil.getValue(mDayDao.getAllDays()).get(0);
-        day.setDate(date);
-        mDayDao.update(day);
         List<Day> days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
-        assertThat(days.get(0), equalTo(day));
+        day = days.get(0);
+        day.setDate(decDate);
+        mDayDao.update(day);
+        days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
+        assertThat(days.get(0)).isEqualTo(day);
+    }
+
+    @Test
+    public void deleteDay() throws Exception {
+        Day day = new Day(date, start, end, isNsDay);
+        mDayDao.insert(day);
+        List<Day> days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
+        day = days.get(0);
+        mDayDao.delete(day);
+        days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
+        assertThat(days).isEmpty();
+    }
+
+    @Test
+    public void deleteAllDays() throws Exception {
+        Day day = new Day(date, start, end, isNsDay);
+        Day day2 = new Day(decDate, start, end, isNsDay);
+        mDayDao.insert(day);
+        mDayDao.insert(day2);
+        List<Day> days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
+        assertThat(days).hasSize(2);
+        mDayDao.deleteAll();
+        days = LiveDataTestUtil.getValue(mDayDao.getAllDays());
+        assertThat(days.isEmpty());
     }
 }
