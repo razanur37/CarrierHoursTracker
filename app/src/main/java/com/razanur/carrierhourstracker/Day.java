@@ -44,6 +44,7 @@ public class Day implements Parcelable {
     private double mOvertime;
     private double mPenalty;
 
+    @Ignore
     public Day(@NonNull Date date, double startTime, double endTime, boolean nsDay) {
         mDate = date;
         mStartTime = startTime;
@@ -58,6 +59,20 @@ public class Day implements Parcelable {
         mPenalty = calcPenalty();
     }
 
+    // Used by Room
+    public Day(int rowID, @NonNull Date mDate, double mStartTime, double mEndTime, boolean mNsDay, boolean mExcluded, double mHoursWorked, double mStraightTime, double mOvertime, double mPenalty) {
+        this.rowID = rowID;
+        this.mDate = mDate;
+        this.mStartTime = mStartTime;
+        this.mEndTime = mEndTime;
+        this.mNsDay = mNsDay;
+        this.mExcluded = mExcluded;
+        this.mHoursWorked = mHoursWorked;
+        this.mStraightTime = mStraightTime;
+        this.mOvertime = mOvertime;
+        this.mPenalty = mPenalty;
+    }
+
     public Day(@NonNull Day day, @NonNull Date date, double startTime, double endTime, boolean nsDay) {
         rowID = day.getRowID();
         mDate = date;
@@ -69,6 +84,19 @@ public class Day implements Parcelable {
         mStraightTime = calcStraightTime();
         mOvertime = calcOvertime();
         mPenalty = calcPenalty();
+    }
+
+    public Day(Day day) {
+        rowID = day.getRowID();
+        mDate = day.getDate();
+        mStartTime = day.getStartTime();
+        mEndTime = day.getEndTime();
+        mNsDay = day.isNsDay();
+        mExcluded = day.isExcluded();
+        mHoursWorked = day.getHoursWorked();
+        mStraightTime = day.getStraightTime();
+        mOvertime = day.getOvertime();
+        mPenalty = day.getPenalty();
     }
 
     private Day(@NonNull Date date) {
@@ -245,12 +273,8 @@ public class Day implements Parcelable {
         return false;
     }
 
-    public int getRowID() {
+    int getRowID() {
         return rowID;
-    }
-
-    public void setRowID(int id) {
-        rowID = id;
     }
 
     public Date getDate() {
@@ -284,39 +308,19 @@ public class Day implements Parcelable {
         return mExcluded;
     }
 
-    void setExcluded(boolean excluded) {
-        mExcluded = excluded;
-    }
-
     double getHoursWorked() {
         return mHoursWorked;
-    }
-
-    void setHoursWorked(double hoursWorked) {
-        mHoursWorked = hoursWorked;
     }
 
     double getStraightTime() {
         return mStraightTime;
     }
 
-    void setStraightTime(double straightTime) {
-        mStraightTime = straightTime;
-    }
-
     double getOvertime() {
         return mOvertime;
     }
 
-    void setOvertime(double overtime) {
-        mOvertime = overtime;
-    }
-
     double getPenalty() {
         return mPenalty;
-    }
-
-    void setPenalty(double penalty) {
-        mPenalty = penalty;
     }
 }

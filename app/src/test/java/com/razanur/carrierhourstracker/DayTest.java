@@ -20,8 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class DayTest {
@@ -171,6 +169,13 @@ public class DayTest {
         assertThat(day.isExcluded()).isTrue();
         assertThat(day.getOvertime()).isEqualTo(2.5);
         assertThat(day.getPenalty()).isZero();
+    }
+
+    @Test
+    public void testCopyConstructor() {
+        Day day = new Day(date, start, end, isNsDay);
+        Day day2 = new Day(day);
+        assertThat(day).isEqualTo(day2);
     }
 
     @Test
