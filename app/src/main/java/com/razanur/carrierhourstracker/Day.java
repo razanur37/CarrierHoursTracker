@@ -27,7 +27,7 @@ import java.util.Date;
 
 
 @Entity(tableName = "day_table")
-public class Day implements Parcelable {
+public class Day implements Parcelable, Comparable {
 
     @PrimaryKey(autoGenerate = true)
     private int rowID;
@@ -146,6 +146,13 @@ public class Day implements Parcelable {
         }
     };
 
+    @Override
+    public int compareTo(Object o) {
+        Day day = (Day) o;
+
+        return mDate.compareTo(day.getDate());
+    }
+
     static Day dateAsDay(Date date) {
         return new Day(date);
     }
@@ -166,11 +173,19 @@ public class Day implements Parcelable {
     @Override
     public int hashCode() {
         int prime = 37;
-        int result = 1;
+        int result = 33;
 
-        result = prime * result +  mDate.hashCode();
+        result = prime * result + mDate.hashCode();
 
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Worked " + Utils.LONG_SDF.format(mDate) +
+                ", from " + String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, mStartTime) +
+                " to " + String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, mEndTime) +
+                '.';
     }
 
     private double calcHoursWorked() {

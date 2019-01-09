@@ -26,6 +26,7 @@ public class DayTest {
 
     private static Date date;
     private static Date decDate;
+    private static Date janDate;
     private static final double start = 7.0;
     private static final double end = 18.0;
     private static final boolean isNsDay = false;
@@ -35,8 +36,10 @@ public class DayTest {
         try {
             String dateString = "06/01/2019";
             String decDateString = "12/15/2019";
+            String janDateString = "01/15/2019";
             date = Utils.SHORT_SDF.parse(dateString);
             decDate = Utils.SHORT_SDF.parse(decDateString);
+            janDate = Utils.SHORT_SDF.parse(janDateString);
         } catch (ParseException e) {
             // Never here
         }
@@ -179,23 +182,43 @@ public class DayTest {
     }
 
     @Test
-    public void testEqualToSelf() {
+    public void testEqualToReflexive() {
         Day day = new Day(date, start, end, isNsDay);
         assertThat(day).isEqualTo(day);
+        assertThat(day.hashCode()).isEqualTo(day.hashCode());
     }
 
     @Test
-    public void testEqualToSameEverything() {
-        Day day = new Day(date, start, end, isNsDay);
-        Day day2 = new Day(date, start, end, isNsDay);
-        assertThat(day).isEqualTo(day2);
-    }
-
-    @Test
-    public void testEqualToSameDateOnly() {
+    public void testEqualToSymmetric() {
         Day day = new Day(date, start, end, isNsDay);
         Day day2 = new Day(date, 7.5, 16.0, true);
+
         assertThat(day).isEqualTo(day2);
+        assertThat(day2).isEqualTo(day);
+
+        assertThat(day.hashCode()).isEqualTo(day2.hashCode());
+        assertThat(day2.hashCode()).isEqualTo(day.hashCode());
+    }
+
+    @Test
+    public void testEqualToTransitive() {
+        Day day = new Day(date, start, end, isNsDay);
+        Day day2 = new Day(date, 7.5, 16.0, true);
+        Day day3 = new Day(date, 8.0, 16.5, false);
+
+        assertThat(day).isEqualTo(day2);
+        assertThat(day2).isEqualTo(day3);
+        assertThat(day).isEqualTo(day3);
+
+        assertThat(day.hashCode()).isEqualTo(day2.hashCode());
+        assertThat(day2.hashCode()).isEqualTo(day3.hashCode());
+        assertThat(day.hashCode()).isEqualTo(day3.hashCode());
+    }
+
+    @Test
+    public void testEqualToNull() {
+        Day day = new Day(date, start, end, isNsDay);
+        assertThat(day).isNotEqualTo(null);
     }
 
     @Test
@@ -203,5 +226,41 @@ public class DayTest {
         Day day = new Day(date, start, end, isNsDay);
         Day day2 = new Day(decDate, start, end, isNsDay);
         assertThat(day).isNotEqualTo(day2);
+        assertThat(day.hashCode()).isNotEqualTo(day2.hashCode());
+    }
+
+    @Test
+    public void testNotEqualToDifferentObject() {
+        Day day = new Day(date, start, end, isNsDay);
+        assertThat(day).isNotEqualTo(date);
+    }
+
+    @Test
+    public void testToString() {
+        Day day = new Day(date, start, end, isNsDay);
+        String dateAsString = "Worked Sat, Jun 1, 2019, from 7.00 to 18.00.";
+        assertThat(day.toString()).matches(dateAsString);
+    }
+
+    @Test
+    public void testComparison() {
+        Day day = new Day(janDate, start, end, isNsDay);
+        Day day2 = new Day(date, start, end, isNsDay);
+        Day day3 = new Day(decDate, start, end, isNsDay);
+        Day day4 = new Day(janDate, 7.5, end, true);
+        Day day5 = new Day(janDate, start, 15.5, isNsDay);
+
+
+        assertThat(day.compareTo(day2)).isEqualTo(-1);
+        assertThat(day2.compareTo(day)).isEqualTo(1);
+
+        assertThat(day2.compareTo(day3)).isEqualTo(-1);
+        assertThat(day.compareTo(day3)).isEqualTo(-1);
+
+        assertThat(day.compareTo(day4)).isEqualTo(0);
+        assertThat(day4.compareTo(day)).isEqualTo(0);
+
+        assertThat(day.compareTo(day5)).isEqualTo(0);
+        assertThat(day4.compareTo(day5)).isEqualTo(0);
     }
 }
