@@ -14,18 +14,18 @@
 
 package com.razanur.carrierhourstracker;
 
-import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
-import androidx.room.testing.MigrationTestHelper;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Date;
+
+import androidx.room.testing.MigrationTestHelper;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import static com.razanur.carrierhourstracker.DayRoomDatabase.MIGRATION_3_4;
 
