@@ -13,17 +13,18 @@
  */
 package com.razanur.carrierhourstracker;
 
-import androidx.sqlite.db.SupportSQLiteDatabase;
+import android.content.Context;
+import android.os.AsyncTask;
+
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
-import android.content.Context;
-import android.os.AsyncTask;
-import androidx.annotation.NonNull;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Day.class}, version = 4)
+@Database(entities = {Day.class}, version = 5)
 @TypeConverters({Converters.class})
 public abstract class DayRoomDatabase extends RoomDatabase {
     public abstract DayDao dayDao();
@@ -54,6 +55,25 @@ public abstract class DayRoomDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS day_table_copy " +
+                    "(`rowID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "date INTEGER NOT NULL, " +
+                    "mStartTime REAL NOT NULL, " +
+                    "mEndTime REAL NOT NULL, " +
+                    "mNsDay INTEGER NOT NULL);");
+
+            database.execSQL("INSERT INTO day_table_copy (date, mStartTime, mEndTime, mNsDay)" +
+                    "SELECT date, mStartTime, mEndTime, mNsDay FROM day_table;");
+
+            database.execSQL("DROP TABLE day_table;");
+            database.execSQL("ALTER TABLE day_table_copy RENAME TO day_table;");
+        }
+    };
+
     static DayRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (DayRoomDatabase.class) {
@@ -62,7 +82,7 @@ public abstract class DayRoomDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             DayRoomDatabase.class, "day_database")
                             .addCallback(sRoomDatabaseCallback)
-                            .addMigrations(MIGRATION_3_4)
+                            .addMigrations(MIGRATION_3_4, MIGRATION_4_5)
                             .build();
                 }
             }

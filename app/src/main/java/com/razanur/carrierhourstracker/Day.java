@@ -39,10 +39,15 @@ public class Day implements Parcelable, Comparable {
     private double mStartTime;
     private double mEndTime;
     private boolean mNsDay;
+    @Ignore
     private boolean mExcluded;
+    @Ignore
     private double mHoursWorked;
+    @Ignore
     private double mStraightTime;
+    @Ignore
     private double mOvertime;
+    @Ignore
     private double mPenalty;
 
     @Ignore
@@ -61,17 +66,17 @@ public class Day implements Parcelable, Comparable {
     }
 
     // Used by Room
-    public Day(int rowID, @NonNull Date mDate, double mStartTime, double mEndTime, boolean mNsDay, boolean mExcluded, double mHoursWorked, double mStraightTime, double mOvertime, double mPenalty) {
+    public Day(int rowID, @NonNull Date mDate, double mStartTime, double mEndTime, boolean mNsDay) {
         this.rowID = rowID;
         this.mDate = mDate;
         this.mStartTime = mStartTime;
         this.mEndTime = mEndTime;
         this.mNsDay = mNsDay;
-        this.mExcluded = mExcluded;
-        this.mHoursWorked = mHoursWorked;
-        this.mStraightTime = mStraightTime;
-        this.mOvertime = mOvertime;
-        this.mPenalty = mPenalty;
+        this.mExcluded = determineIfExcluded(mDate);
+        this.mHoursWorked = calcHoursWorked();
+        this.mStraightTime = calcStraightTime();
+        this.mOvertime = calcOvertime();
+        this.mPenalty = calcPenalty();
     }
 
     public Day(@NonNull Day day, @NonNull Date date, double startTime, double endTime, boolean nsDay) {
