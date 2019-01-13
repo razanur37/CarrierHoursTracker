@@ -18,35 +18,30 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.Observer;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity
         implements DayListAdapter.OnItemClickListener,
         DayListAdapter.OnItemLongClickListener,
-        DeleteDialogFragment.DeleteDialogListener {
+        WorkLogFragment.WorkLogFragmentListener,
+        DeleteDialogFragment.DeleteDialogListener,
+        WeekFragment.WeekFragmentListener {
 
     public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
     public static final int EDIT_DAY_ACTIVITY_REQUEST_CODE = 2;
     public static final long DELETE_ALL_CONFIRM_ID = -1;
 
     private DayViewModel mDayViewModel;
-    private TextView totalStraightHours;
-    private TextView totalOvertimeHours;
-    private TextView totalPenaltyHours;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,44 +50,22 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        RecyclerView recyclerView = findViewById(R.id.date_recycler_view);
-        totalStraightHours = findViewById(R.id.total_st_hours);
-        totalOvertimeHours = findViewById(R.id.total_ot_hours);
-        totalPenaltyHours = findViewById(R.id.total_vt_hours);
-        final DayListAdapter adapter = new DayListAdapter(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
-
-        mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
-            @Override
-            public void onChanged(@Nullable List<Day> days) {
-                double totalStraight = 0.0;
-                double totalOvertime = 0.0;
-                double totalPenalty = 0.0;
-                if (days != null) {
-                    for (Day day : days) {
-                        totalStraight += day.getStraightTime();
-                        totalOvertime += day.getOvertime();
-                        totalPenalty += day.getPenalty();
-                    }
-                }
-                totalStraightHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalStraight));
-                totalOvertimeHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalOvertime));
-                totalPenaltyHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalPenalty));
-                adapter.setDays(days);
-            }
-        });
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
-                startActivityForResult(intent, NEW_DAY_ACTIVITY_REQUEST_CODE);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, NewDayActivity.newInstance())
+                        .addToBackStack(null)
+                        .commit();
             }
         });
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, WorkLogFragment.newInstance())
+                .commitNow();
     }
 
     @Override
@@ -112,6 +85,16 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_clear) {
             showDeleteDialog();
+            return true;
+        }
+
+        if (id == R.id.action_week_view) {
+            Fragment weekView = WeekFragment.newInstance();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.fragment_container, weekView);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
             return true;
         }
 
@@ -139,9 +122,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemClicked(Day day) {
-        Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
-        intent.putExtra("day", day);
-        startActivityForResult(intent, EDIT_DAY_ACTIVITY_REQUEST_CODE);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, NewDayActivity.newInstance(day))
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

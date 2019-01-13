@@ -14,7 +14,6 @@
 package com.razanur.carrierhourstracker;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,8 +78,6 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             holder.mHoursWorked.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getHoursWorked()));
             holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getOvertime()));
             holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getPenalty()));
-
-            Log.d("ROWID_DEBUG", Integer.toString(current.getRowID()));
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
