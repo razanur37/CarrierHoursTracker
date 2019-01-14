@@ -18,7 +18,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.razanur.carrierhourstracker"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 4
         versionName "1.2.0"
@@ -38,6 +38,8 @@ android {
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
+    productFlavors {
+    }
 }
 
 buildscript {
@@ -45,7 +47,7 @@ buildscript {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'com.google.android.material:material:1.1.0-alpha02'
@@ -57,16 +59,15 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.arch.core:core-testing:2.0.0'
     androidTestImplementation 'androidx.test.ext:truth:1.1.0'
-    androidTestImplementation "com.google.truth:truth:0.42"
-    testImplementation "com.google.truth:truth:0.42"
-    testImplementation "com.google.truth.extensions:truth-java8-extension:0.42"
-
+    androidTestImplementation 'com.google.truth:truth:0.42'
+    testImplementation 'com.google.truth:truth:0.42'
+    testImplementation 'com.google.truth.extensions:truth-java8-extension:0.42'
     // Room components
     implementation 'androidx.room:room-runtime:2.1.0-alpha03'
     annotationProcessor 'androidx.room:room-compiler:2.1.0-alpha03'
     androidTestImplementation 'androidx.room:room-testing:2.1.0-alpha03'
-
     // Lifecycle components
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0-alpha01'
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.1.0-alpha01'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }

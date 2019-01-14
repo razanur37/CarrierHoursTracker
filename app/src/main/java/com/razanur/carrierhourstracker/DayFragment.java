@@ -15,7 +15,6 @@ package com.razanur.carrierhourstracker;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +37,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-public class NewDayActivity extends Fragment {
+public class DayFragment extends Fragment {
 
     private EditText startTime;
     private EditText endTime;
@@ -50,14 +49,20 @@ public class NewDayActivity extends Fragment {
 
     final Calendar myCalendar = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener dateListener;
+    NewDayListener mListener;
 
-    public static NewDayActivity newInstance() {
-        return new NewDayActivity();
+    public interface NewDayListener {
+        public void onDaySet(Day day, boolean isEditing);
+        public void onButtonClick(View v);
     }
-    public static NewDayActivity newInstance(Day day) {
+
+    public static DayFragment newInstance() {
+        return new DayFragment();
+    }
+    public static DayFragment newInstance(Day day) {
         Bundle args = new Bundle();
         args.putParcelable("day", day);
-        NewDayActivity fragment = new NewDayActivity();
+        DayFragment fragment = new DayFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,7 +72,7 @@ public class NewDayActivity extends Fragment {
         Bundle args = getArguments();
         if (args != null)
             oldDay = args.getParcelable("day");
-        View view = inflater.inflate(R.layout.content_new_day, container, false);
+        View view = inflater.inflate(R.layout.content_day, container, false);
 
         startTime = view.findViewById(R.id.et_start_time);
         endTime = view.findViewById(R.id.et_end_time);
@@ -97,6 +102,23 @@ public class NewDayActivity extends Fragment {
         createDateDialog();
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof WorkLogFragment.WorkLogFragmentListener) {
+            mListener = (DayFragment.NewDayListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement NewDayListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     private boolean checkNSDay(int checkedRadioButtonId) {
@@ -130,7 +152,7 @@ public class NewDayActivity extends Fragment {
         dateText.setText(Utils.SHORT_SDF.format(myCalendar.getTime()));
     }
 
-    public void setTotals(View v) {
+    public void onButtonClick(View v) {
         InputMethodManager imm = (InputMethodManager) getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -166,7 +188,6 @@ public class NewDayActivity extends Fragment {
 
         inputsVerified = verifyInputs(start, end, date);
 
-        Intent replyIntent = new Intent();
 
         if (inputsVerified) {
             Day day;
@@ -176,7 +197,8 @@ public class NewDayActivity extends Fragment {
             } else {
                 day = new Day(date, start, end, isNSDay);
             }
-            replyIntent.putExtra("day", day);
+            mListener.onDaySet(day, oldDay != null);
+            getActivity().getSupportFragmentManager().popBackStack();
         }
     }
 

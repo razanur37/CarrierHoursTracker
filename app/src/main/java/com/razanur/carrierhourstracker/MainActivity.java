@@ -13,12 +13,10 @@
  */
 package com.razanur.carrierhourstracker;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -33,15 +31,13 @@ import androidx.lifecycle.ViewModelProviders;
 public class MainActivity extends AppCompatActivity
         implements DayListAdapter.OnItemClickListener,
         DayListAdapter.OnItemLongClickListener,
-        WorkLogFragment.WorkLogFragmentListener,
-        DeleteDialogFragment.DeleteDialogListener,
-        WeekFragment.WeekFragmentListener {
+        DayFragment.NewDayListener,
+        DeleteDialogFragment.DeleteDialogListener {
 
-    public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
-    public static final int EDIT_DAY_ACTIVITY_REQUEST_CODE = 2;
     public static final long DELETE_ALL_CONFIRM_ID = -1;
 
     private DayViewModel mDayViewModel;
+    private DayFragment newDayFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +52,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                newDayFragment = DayFragment.newInstance();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, NewDayActivity.newInstance())
+                        .replace(R.id.container, newDayFragment)
                         .addToBackStack(null)
                         .commit();
             }
@@ -92,7 +89,7 @@ public class MainActivity extends AppCompatActivity
             Fragment weekView = WeekFragment.newInstance();
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.fragment_container, weekView);
+            fragmentTransaction.replace(R.id.container, weekView);
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
             return true;
@@ -101,29 +98,25 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    public void onDaySet(Day day, boolean isEditing) {
 
-        if ((requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE || requestCode == EDIT_DAY_ACTIVITY_REQUEST_CODE)
-                && resultCode == RESULT_OK) {
-            Day day = data.getParcelableExtra("day");
+        if (!isEditing)
+            mDayViewModel.insert(day);
+        else
+            mDayViewModel.update(day);
+    }
 
-            if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE)
-                mDayViewModel.insert(day);
-            else
-                mDayViewModel.update(day);
-        } else {
-            Toast.makeText(
-                    getApplicationContext(),
-                    R.string.empty_not_saved,
-                    Toast.LENGTH_LONG).show();
-        }
+    @Override
+    public void onButtonClick(View v) {
+        newDayFragment.onButtonClick(v);
     }
 
     @Override
     public void onItemClicked(Day day) {
+        newDayFragment = DayFragment.newInstance(day);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, NewDayActivity.newInstance(day))
+                .replace(R.id.container, newDayFragment)
                 .addToBackStack(null)
                 .commit();
     }

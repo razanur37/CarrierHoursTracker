@@ -14,32 +14,33 @@
 
 package com.razanur.carrierhourstracker;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link WeekFragmentListener} interface
- * to handle interaction events.
  * Use the {@link WeekFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class WeekFragment extends Fragment {
 
-    private WeekFragmentListener mListener;
     private DayViewModel mDayViewModel;
     private TextView totalStraightHours;
 
@@ -57,62 +58,115 @@ public class WeekFragment extends Fragment {
         return new WeekFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //totalStraightHours = getActivity().findViewById(R.id.tv_week_total);
-        mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
-
-        mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
-            @Override
-            public void onChanged(@Nullable List<Day> days) {
-                double totalStraight = 0.0;
-                double totalOvertime = 0.0;
-                double totalPenalty = 0.0;
-                if (days != null) {
-                    for (Day day : days) {
-                        totalStraight += day.getStraightTime();
-                    }
-                }
-                totalStraightHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalStraight));
-            }
-        });
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_container, container, false);
+        View view = inflater.inflate(R.layout.content_week, container, false);
+
+        totalStraightHours = view.findViewById(R.id.week_total);
+        mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
+
+        mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
+            @Override
+            public void onChanged(@Nullable List<Day> days) {
+                Function<Day, String> weekNum = new Function<Day, String>() {
+                    @Override
+                    public String apply(Day input) {
+                        return input.getWeekYear();
+                    }
+                };
+
+                List<Double> straightList = new ArrayList<>();
+                List<Date> satList = new ArrayList<>();
+                List<Date> friList = new ArrayList<>();
+                ArrayList<Integer> weekList = new ArrayList<>();
+                String totalString = "";
+
+                if (days != null) {
+                    Map<String, List<Day>> weekMap = days.stream()
+                            .collect(Collectors.groupingBy(weekNum));
+                    TreeSet<String> weeks = new TreeSet<>(weekMap.keySet());
+
+                    List<Double> weekStraightList = new ArrayList<>();
+                    List<Double> weekOvertimeList = new ArrayList<>();
+                    List<Double> weekPenaltyList = new ArrayList<>();
+
+                    for(String week : weeks) {
+                        double weekStraight = 0.0;
+                        double weekOvertime = 0.0;
+                        double weekPenalty = 0.0;
+                        List<Day> daysInWeek = weekMap.get(week);
+
+                        for(Day day : daysInWeek) {
+                            double dayStraight = day.getStraightTime();
+                            double dayOvertime = day.getOvertime();
+                            double dayPenalty = day.getPenalty();
+
+                            weekStraight += dayStraight;
+                            if (weekStraight > 40) {
+                                dayOvertime += (weekStraight-40.0);
+                                weekStraight = 40.0;
+                            }
+
+                            weekOvertime += dayOvertime;
+                            if(weekOvertime > 16) {
+                                dayPenalty += (weekOvertime-16.0);
+                                weekOvertime = 16.0;
+                            }
+
+                            weekPenalty += dayPenalty;
+                        }
+                        weekStraightList.add(weekStraight);
+                        weekOvertimeList.add(weekOvertime);
+                        weekPenaltyList.add(weekPenalty);
+
+                        satList.add(getSatOfWeek(daysInWeek.get(0)));
+                        friList.add(getFriOfWeek(daysInWeek.get(0)));
+                    }
+
+                    for(int i=0; i<satList.size(); i++) {
+                        totalString = totalString.concat(Utils.SHORT_SDF.format(satList.get(i)));
+                        totalString = totalString.concat("-");
+                        totalString = totalString.concat(Utils.SHORT_SDF.format(friList.get(i)));
+                        totalString = totalString.concat("\n");
+                        totalString = totalString.concat(Double.toString(weekStraightList.get(i)));
+                        totalString = totalString.concat("-");
+                        totalString = totalString.concat(Double.toString(weekOvertimeList.get(i)));
+                        totalString = totalString.concat("-");
+                        totalString = totalString.concat(Double.toString(weekPenaltyList.get(i)));
+                        totalString = totalString.concat("\n");
+                    }
+
+                    totalStraightHours.setText(totalString);
+                }
+            }
+        });
+
+        return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof WeekFragmentListener) {
-            mListener = (WeekFragmentListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement WeekFragmentListener");
-        }
+    private int calcWeek(Day day) {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.SATURDAY);
+        cal.setTime(day.getDate());
+        return cal.get(Calendar.WEEK_OF_YEAR);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private Date getSatOfWeek(Day day) {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.SATURDAY);
+        cal.setTime(day.getDate());
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        return cal.getTime();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface WeekFragmentListener {
+    private Date getFriOfWeek(Day day) {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.SATURDAY);
+        cal.setTime(day.getDate());
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+        return cal.getTime();
     }
 }

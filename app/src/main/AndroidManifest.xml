@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NewDayActivity"
+            android:name=".DayFragment"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
