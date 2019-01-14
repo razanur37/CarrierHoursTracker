@@ -20,7 +20,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,26 +33,23 @@ import androidx.recyclerview.widget.RecyclerView;
 public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekViewHolder> {
 
     class WeekViewHolder extends RecyclerView.ViewHolder {
-        private final TextView mDate;
-        private final TextView mStartTime;
-        private final TextView mEndTime;
-        private final TextView mHoursWorked;
+        private final TextView mWeek;
+        private final TextView mStraight;
         private final TextView mOvertime;
         private final TextView mPenalty;
 
         WeekViewHolder(View itemView) {
             super(itemView);
-            mDate = itemView.findViewById(R.id.tv_item_date);
-            mStartTime = itemView.findViewById(R.id.tv_item_start_time);
-            mEndTime = itemView.findViewById(R.id.tv_item_end_time);
-            mHoursWorked = itemView.findViewById(R.id.tv_item_hours);
-            mOvertime = itemView.findViewById(R.id.tv_item_overtime);
-            mPenalty = itemView.findViewById(R.id.tv_item_penalty);
+            mWeek = itemView.findViewById(R.id.tv_item_week);
+            mStraight = itemView.findViewById(R.id.tv_week_straight);
+            mOvertime = itemView.findViewById(R.id.tv_week_overtime);
+            mPenalty = itemView.findViewById(R.id.tv_week_penalty);
         }
     }
 
     private final LayoutInflater mInflater;
-    private List<Day> mDays;
+    private Map<String, List<Day>> mWeekMap;
+    private List<String> mWeekYears;
 
     WeekListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -62,10 +64,13 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
 
     @Override
     public void onBindViewHolder(@NonNull WeekListAdapter.WeekViewHolder holder, final int position) {
-        if (mDays != null) {
-            final Day current = mDays.get(position);
+        if (mWeekMap != null) {
+            final List<Day> current = mWeekMap.get(mWeekYears.get(position));
+            Date sat = getSatOfWeek(current.get(0));
+            Date fri = getFriOfWeek(current.get(0));
+            String week = Utils.SHORT_SDF.format(sat) + "-" + Utils.SHORT_SDF.format(fri);
 
-            holder.mDate.setText(Utils.LONG_SDF.format(current.getDate()));
+            holder.mWeek.setText(week);
             holder.mStartTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getStartTime()));
             holder.mEndTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getEndTime()));
             holder.mHoursWorked.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getHoursWorked()));
@@ -90,8 +95,10 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
         }
     }
 
-    void setDays(List<Day> days) {
-        mDays = days;
+    void setDays(Map<String, List<Day>> weekMap) {
+        mWeekMap = weekMap;
+        TreeSet<String> weekYears = new TreeSet<>(mWeekMap.keySet());
+        mWeekYears = new ArrayList<>(weekYears);
         notifyDataSetChanged();
     }
 
@@ -101,5 +108,21 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
             return mDays.size();
         else
             return 0;
+    }
+
+    private Date getSatOfWeek(Day day) {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.SATURDAY);
+        cal.setTime(day.getDate());
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        return cal.getTime();
+    }
+
+    private Date getFriOfWeek(Day day) {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.SATURDAY);
+        cal.setTime(day.getDate());
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+        return cal.getTime();
     }
 }
