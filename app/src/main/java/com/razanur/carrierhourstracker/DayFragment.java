@@ -15,9 +15,10 @@ package com.razanur.carrierhourstracker;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -30,12 +31,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-public class NewDayActivity extends AppCompatActivity {
+public class DayFragment extends Fragment {
 
     private EditText startTime;
     private EditText endTime;
@@ -45,21 +47,38 @@ public class NewDayActivity extends AppCompatActivity {
 
     private Day oldDay;
 
-    final Calendar myCalendar = Calendar.getInstance();
-    DatePickerDialog.OnDateSetListener dateListener;
+    private final Calendar myCalendar = Calendar.getInstance();
+    private DatePickerDialog.OnDateSetListener dateListener;
+    private NewDayListener mListener;
+
+    public interface NewDayListener {
+        void onDaySet(Day day, boolean isEditing);
+        void onButtonClick(View v);
+    }
+
+    static DayFragment newInstance() {
+        return new DayFragment();
+    }
+    static DayFragment newInstance(Day day) {
+        Bundle args = new Bundle();
+        args.putParcelable("day", day);
+        DayFragment fragment = new DayFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        setContentView(R.layout.activity_new_day);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Bundle args = getArguments();
+        if (args != null)
+            oldDay = args.getParcelable("day");
+        View view = inflater.inflate(R.layout.content_day, container, false);
 
-        startTime = findViewById(R.id.et_start_time);
-        endTime = findViewById(R.id.et_end_time);
-        dateText = findViewById(R.id.et_date);
-        nsDayGroup = findViewById(R.id.ns_day_group);
+        startTime = view.findViewById(R.id.et_start_time);
+        endTime = view.findViewById(R.id.et_end_time);
+        dateText = view.findViewById(R.id.et_date);
+        nsDayGroup = view.findViewById(R.id.ns_day_group);
 
-        oldDay = intent.getParcelableExtra("day");
         if (oldDay != null) {
             startTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, oldDay.getStartTime()));
             endTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, oldDay.getEndTime()));
@@ -67,7 +86,7 @@ public class NewDayActivity extends AppCompatActivity {
                 nsDayGroup.check(R.id.rb_ns_yes);
             Date date = oldDay.getDate();
             dateText.setText(Utils.SHORT_SDF.format(date));
-            Button button = findViewById(R.id.button_submit);
+            Button button = view.findViewById(R.id.button_submit);
             button.setText(R.string.update);
         }
 
@@ -81,6 +100,28 @@ public class NewDayActivity extends AppCompatActivity {
         });
 
         createDateDialog();
+
+        return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception.
+        try {
+            mListener = (NewDayListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     private boolean checkNSDay(int checkedRadioButtonId) {
@@ -101,7 +142,9 @@ public class NewDayActivity extends AppCompatActivity {
         dateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(NewDayActivity.this, dateListener,
+                if (getContext() == null)
+                    return;
+                new DatePickerDialog(getContext(), dateListener,
                         myCalendar.get(Calendar.YEAR),
                         myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH))
@@ -114,8 +157,10 @@ public class NewDayActivity extends AppCompatActivity {
         dateText.setText(Utils.SHORT_SDF.format(myCalendar.getTime()));
     }
 
-    public void setTotals(View v) {
-        InputMethodManager imm = (InputMethodManager) getApplicationContext()
+    void onButtonClick(View v) {
+        if (getContext() == null)
+            return;
+        InputMethodManager imm = (InputMethodManager) getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
@@ -150,7 +195,6 @@ public class NewDayActivity extends AppCompatActivity {
 
         inputsVerified = verifyInputs(start, end, date);
 
-        Intent replyIntent = new Intent();
 
         if (inputsVerified) {
             Day day;
@@ -160,9 +204,10 @@ public class NewDayActivity extends AppCompatActivity {
             } else {
                 day = new Day(date, start, end, isNSDay);
             }
-            replyIntent.putExtra("day", day);
-            setResult(RESULT_OK, replyIntent);
-            finish();
+            mListener.onDaySet(day, oldDay != null);
+            if (getActivity() == null)
+                return;
+            getActivity().getSupportFragmentManager().popBackStack();
         }
     }
 
@@ -198,7 +243,7 @@ public class NewDayActivity extends AppCompatActivity {
     }
 
     private void showToast(String message) {
-        Context context = getApplicationContext();
+        Context context = getContext();
         int duration = Toast.LENGTH_SHORT;
 
         Toast.makeText(context, message, duration).show();

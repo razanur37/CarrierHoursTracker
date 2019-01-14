@@ -13,40 +13,29 @@
  */
 package com.razanur.carrierhourstracker;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.List;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.Observer;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity
         implements DayListAdapter.OnItemClickListener,
         DayListAdapter.OnItemLongClickListener,
+        DayFragment.NewDayListener,
         DeleteDialogFragment.DeleteDialogListener {
 
-    public static final int NEW_DAY_ACTIVITY_REQUEST_CODE = 1;
-    public static final int EDIT_DAY_ACTIVITY_REQUEST_CODE = 2;
-    public static final long DELETE_ALL_CONFIRM_ID = -1;
-
     private DayViewModel mDayViewModel;
-    private TextView totalStraightHours;
-    private TextView totalOvertimeHours;
-    private TextView totalPenaltyHours;
+    private DayFragment newDayFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,44 +44,23 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        RecyclerView recyclerView = findViewById(R.id.date_recycler_view);
-        totalStraightHours = findViewById(R.id.total_st_hours);
-        totalOvertimeHours = findViewById(R.id.total_ot_hours);
-        totalPenaltyHours = findViewById(R.id.total_vt_hours);
-        final DayListAdapter adapter = new DayListAdapter(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
-
-        mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
-            @Override
-            public void onChanged(@Nullable List<Day> days) {
-                double totalStraight = 0.0;
-                double totalOvertime = 0.0;
-                double totalPenalty = 0.0;
-                if (days != null) {
-                    for (Day day : days) {
-                        totalStraight += day.getStraightTime();
-                        totalOvertime += day.getOvertime();
-                        totalPenalty += day.getPenalty();
-                    }
-                }
-                totalStraightHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalStraight));
-                totalOvertimeHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalOvertime));
-                totalPenaltyHours.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, totalPenalty));
-                adapter.setDays(days);
-            }
-        });
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
-                startActivityForResult(intent, NEW_DAY_ACTIVITY_REQUEST_CODE);
+                newDayFragment = DayFragment.newInstance();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, newDayFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, WorkLogFragment.newInstance())
+                .commitNow();
     }
 
     @Override
@@ -115,43 +83,49 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.action_week_view) {
+            Fragment weekView = WeekFragment.newInstance();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, weekView);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    public void onDaySet(Day day, boolean isEditing) {
 
-        if ((requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE || requestCode == EDIT_DAY_ACTIVITY_REQUEST_CODE)
-                && resultCode == RESULT_OK) {
-            Day day = data.getParcelableExtra("day");
+        if (!isEditing)
+            mDayViewModel.insert(day);
+        else
+            mDayViewModel.update(day);
+    }
 
-            if (requestCode == NEW_DAY_ACTIVITY_REQUEST_CODE)
-                mDayViewModel.insert(day);
-            else
-                mDayViewModel.update(day);
-        } else {
-            Toast.makeText(
-                    getApplicationContext(),
-                    R.string.empty_not_saved,
-                    Toast.LENGTH_LONG).show();
-        }
+    @Override
+    public void onButtonClick(View v) {
+        newDayFragment.onButtonClick(v);
     }
 
     @Override
     public void onItemClicked(Day day) {
-        Intent intent = new Intent(MainActivity.this, NewDayActivity.class);
-        intent.putExtra("day", day);
-        startActivityForResult(intent, EDIT_DAY_ACTIVITY_REQUEST_CODE);
+        newDayFragment = DayFragment.newInstance(day);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, newDayFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
-    public boolean onItemLongClicked(Day day) {
+    public void onItemLongClicked(Day day) {
         showDeleteDialog(day);
-        return true;
     }
 
     public void showDeleteDialog() {
-        DialogFragment dialog = DeleteDialogFragment.newInstance(DELETE_ALL_CONFIRM_ID);
+        DialogFragment dialog = DeleteDialogFragment.newInstance();
         dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
     }
 
@@ -162,13 +136,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, long id) {
-        mDayViewModel.clear();
-    }
-
-    @Override
     public void onDialogPositiveClick(DialogFragment dialog, Day day) {
-        mDayViewModel.delete(day);
+        if (day == null)
+            mDayViewModel.clear();
+        else
+            mDayViewModel.delete(day);
     }
 
     @Override

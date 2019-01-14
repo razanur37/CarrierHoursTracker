@@ -49,6 +49,8 @@ public class Day implements Parcelable, Comparable {
     private double mOvertime;
     @Ignore
     private double mPenalty;
+    @Ignore
+    private String mWeekYear;
 
     @Ignore
     public Day(@NonNull Date date, double startTime, double endTime, boolean nsDay) {
@@ -63,6 +65,7 @@ public class Day implements Parcelable, Comparable {
         mStraightTime = calcStraightTime();
         mOvertime = calcOvertime();
         mPenalty = calcPenalty();
+        mWeekYear = calcWeekYear();
     }
 
     // Used by Room
@@ -77,6 +80,7 @@ public class Day implements Parcelable, Comparable {
         this.mStraightTime = calcStraightTime();
         this.mOvertime = calcOvertime();
         this.mPenalty = calcPenalty();
+        this.mWeekYear = calcWeekYear();
     }
 
     public Day(@NonNull Day day, @NonNull Date date, double startTime, double endTime, boolean nsDay) {
@@ -90,6 +94,7 @@ public class Day implements Parcelable, Comparable {
         mStraightTime = calcStraightTime();
         mOvertime = calcOvertime();
         mPenalty = calcPenalty();
+        mWeekYear = calcWeekYear();
     }
 
     public Day(Day day) {
@@ -103,6 +108,7 @@ public class Day implements Parcelable, Comparable {
         mStraightTime = day.getStraightTime();
         mOvertime = day.getOvertime();
         mPenalty = day.getPenalty();
+        mWeekYear = day.getWeekYear();
     }
 
     private Day(@NonNull Date date) {
@@ -120,6 +126,7 @@ public class Day implements Parcelable, Comparable {
         mStraightTime = in.readDouble();
         mOvertime = in.readDouble();
         mPenalty = in.readDouble();
+        mWeekYear = in.readString();
     }
 
     @Override
@@ -139,6 +146,7 @@ public class Day implements Parcelable, Comparable {
         dest.writeDouble(mStraightTime);
         dest.writeDouble(mOvertime);
         dest.writeDouble(mPenalty);
+        dest.writeString(mWeekYear);
     }
 
     @Ignore
@@ -186,6 +194,7 @@ public class Day implements Parcelable, Comparable {
         return result;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Worked " + Utils.LONG_SDF.format(mDate) +
@@ -294,6 +303,15 @@ public class Day implements Parcelable, Comparable {
         return false;
     }
 
+    private String calcWeekYear() {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.SATURDAY);
+        cal.setTime(mDate);
+        String weekYear = Integer.toString(cal.get(Calendar.WEEK_OF_YEAR)) + "-";
+        weekYear = weekYear.concat(Integer.toString(cal.get(Calendar.YEAR)));
+        return weekYear;
+    }
+
     int getRowID() {
         return rowID;
     }
@@ -343,5 +361,9 @@ public class Day implements Parcelable, Comparable {
 
     double getPenalty() {
         return mPenalty;
+    }
+
+    String getWeekYear() {
+        return mWeekYear;
     }
 }
