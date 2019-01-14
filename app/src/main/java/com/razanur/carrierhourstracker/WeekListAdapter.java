@@ -68,34 +68,43 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
             final List<Day> current = mWeekMap.get(mWeekYears.get(position));
             Date sat = getSatOfWeek(current.get(0));
             Date fri = getFriOfWeek(current.get(0));
+
             String week = Utils.SHORT_SDF.format(sat) + "-" + Utils.SHORT_SDF.format(fri);
 
-            holder.mWeek.setText(week);
-            holder.mStartTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getStartTime()));
-            holder.mEndTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getEndTime()));
-            holder.mHoursWorked.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getHoursWorked()));
-            holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getOvertime()));
-            holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getPenalty()));
+            double weekStraight = 0.0;
+            double weekOvertime = 0.0;
+            double weekPenalty = 0.0;
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((MainActivity) mInflater.getContext()).onItemClicked(current);
+            for(Day day : current) {
+                double dayStraight = day.getStraightTime();
+                double dayOvertime = day.getOvertime();
+                double dayPenalty = day.getPenalty();
+
+                weekStraight += dayStraight;
+                if (weekStraight > 40) {
+                    dayOvertime += (weekStraight-40.0);
+                    weekStraight = 40.0;
                 }
-            });
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    ((MainActivity) mInflater.getContext()).onItemLongClicked(current);
-                    return true;
+
+                weekOvertime += dayOvertime;
+                if(weekOvertime > 16) {
+                    dayPenalty += (weekOvertime-16.0);
+                    weekOvertime = 16.0;
                 }
-            });
+
+                weekPenalty += dayPenalty;
+            }
+
+            holder.mWeek.setText(week);
+            holder.mStraight.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, weekStraight));
+            holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, weekOvertime));
+            holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, weekPenalty));
         } else {
-            holder.mDate.setText("");
+            holder.mWeek.setText("");
         }
     }
 
-    void setDays(Map<String, List<Day>> weekMap) {
+    void setWeeks(Map<String, List<Day>> weekMap) {
         mWeekMap = weekMap;
         TreeSet<String> weekYears = new TreeSet<>(mWeekMap.keySet());
         mWeekYears = new ArrayList<>(weekYears);
@@ -104,8 +113,8 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
 
     @Override
     public int getItemCount() {
-        if (mDays != null)
-            return mDays.size();
+        if (mWeekYears != null)
+            return mWeekYears.size();
         else
             return 0;
     }

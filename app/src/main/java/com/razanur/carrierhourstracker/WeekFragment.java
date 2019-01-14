@@ -20,12 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,6 +31,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,7 +65,12 @@ public class WeekFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.content_week, container, false);
 
-        totalStraightHours = view.findViewById(R.id.week_total);
+        RecyclerView recyclerView = view.findViewById(R.id.week_recycler_view);
+
+        final WeekListAdapter adapter = new WeekListAdapter(view.getContext());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
         mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
@@ -78,69 +83,13 @@ public class WeekFragment extends Fragment {
                     }
                 };
 
-                List<Double> straightList = new ArrayList<>();
-                List<Date> satList = new ArrayList<>();
-                List<Date> friList = new ArrayList<>();
-                ArrayList<Integer> weekList = new ArrayList<>();
-                String totalString = "";
+                Map<String, List<Day>> weekMap;
 
                 if (days != null) {
-                    Map<String, List<Day>> weekMap = days.stream()
-                            .collect(Collectors.groupingBy(weekNum));
-                    TreeSet<String> weeks = new TreeSet<>(weekMap.keySet());
-
-                    List<Double> weekStraightList = new ArrayList<>();
-                    List<Double> weekOvertimeList = new ArrayList<>();
-                    List<Double> weekPenaltyList = new ArrayList<>();
-
-                    for(String week : weeks) {
-                        double weekStraight = 0.0;
-                        double weekOvertime = 0.0;
-                        double weekPenalty = 0.0;
-                        List<Day> daysInWeek = weekMap.get(week);
-
-                        for(Day day : daysInWeek) {
-                            double dayStraight = day.getStraightTime();
-                            double dayOvertime = day.getOvertime();
-                            double dayPenalty = day.getPenalty();
-
-                            weekStraight += dayStraight;
-                            if (weekStraight > 40) {
-                                dayOvertime += (weekStraight-40.0);
-                                weekStraight = 40.0;
-                            }
-
-                            weekOvertime += dayOvertime;
-                            if(weekOvertime > 16) {
-                                dayPenalty += (weekOvertime-16.0);
-                                weekOvertime = 16.0;
-                            }
-
-                            weekPenalty += dayPenalty;
-                        }
-                        weekStraightList.add(weekStraight);
-                        weekOvertimeList.add(weekOvertime);
-                        weekPenaltyList.add(weekPenalty);
-
-                        satList.add(getSatOfWeek(daysInWeek.get(0)));
-                        friList.add(getFriOfWeek(daysInWeek.get(0)));
-                    }
-
-                    for(int i=0; i<satList.size(); i++) {
-                        totalString = totalString.concat(Utils.SHORT_SDF.format(satList.get(i)));
-                        totalString = totalString.concat("-");
-                        totalString = totalString.concat(Utils.SHORT_SDF.format(friList.get(i)));
-                        totalString = totalString.concat("\n");
-                        totalString = totalString.concat(Double.toString(weekStraightList.get(i)));
-                        totalString = totalString.concat("-");
-                        totalString = totalString.concat(Double.toString(weekOvertimeList.get(i)));
-                        totalString = totalString.concat("-");
-                        totalString = totalString.concat(Double.toString(weekPenaltyList.get(i)));
-                        totalString = totalString.concat("\n");
-                    }
-
-                    totalStraightHours.setText(totalString);
-                }
+                    weekMap = days.stream().collect(Collectors.groupingBy(weekNum));
+                } else
+                    weekMap = null;
+                adapter.setWeeks(weekMap);
             }
         });
 
