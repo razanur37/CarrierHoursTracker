@@ -31,7 +31,7 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
     }
 
     public interface OnItemLongClickListener {
-        boolean onItemLongClicked(Day day);
+        void onItemLongClicked(Day day);
     }
 
     class DayViewHolder extends RecyclerView.ViewHolder {

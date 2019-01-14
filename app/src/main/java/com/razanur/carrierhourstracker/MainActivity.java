@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity
         DayFragment.NewDayListener,
         DeleteDialogFragment.DeleteDialogListener {
 
-    public static final long DELETE_ALL_CONFIRM_ID = -1;
-
     private DayViewModel mDayViewModel;
     private DayFragment newDayFragment;
 
@@ -122,13 +120,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onItemLongClicked(Day day) {
+    public void onItemLongClicked(Day day) {
         showDeleteDialog(day);
-        return true;
     }
 
     public void showDeleteDialog() {
-        DialogFragment dialog = DeleteDialogFragment.newInstance(DELETE_ALL_CONFIRM_ID);
+        DialogFragment dialog = DeleteDialogFragment.newInstance();
         dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
     }
 
@@ -139,13 +136,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog, long id) {
-        mDayViewModel.clear();
-    }
-
-    @Override
     public void onDialogPositiveClick(DialogFragment dialog, Day day) {
-        mDayViewModel.delete(day);
+        if (day == null)
+            mDayViewModel.clear();
+        else
+            mDayViewModel.delete(day);
     }
 
     @Override

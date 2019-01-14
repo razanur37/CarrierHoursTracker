@@ -14,7 +14,6 @@
 package com.razanur.carrierhourstracker;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -94,21 +93,6 @@ public abstract class DayRoomDatabase extends RoomDatabase {
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
-            new PopulateDbAsync(INSTANCE).execute();
         }
     };
-
-    private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
-        //private final DayDao mDao;
-
-        PopulateDbAsync(DayRoomDatabase db) {
-            //mDao = db.dayDao();
-        }
-
-        @Override
-        protected Void doInBackground(final Void... params) {
-            //mDao.deleteAll();
-            return null;
-        }
-    }
 }

@@ -194,6 +194,7 @@ public class Day implements Parcelable, Comparable {
         return result;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Worked " + Utils.LONG_SDF.format(mDate) +
@@ -302,7 +303,7 @@ public class Day implements Parcelable, Comparable {
         return false;
     }
 
-    String calcWeekYear() {
+    private String calcWeekYear() {
         Calendar cal = Calendar.getInstance();
         cal.setFirstDayOfWeek(Calendar.SATURDAY);
         cal.setTime(mDate);

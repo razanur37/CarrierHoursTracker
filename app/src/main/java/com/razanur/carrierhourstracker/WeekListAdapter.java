@@ -58,7 +58,7 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
     @NonNull
     @Override
     public WeekListAdapter.WeekViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
+        View itemView = mInflater.inflate(R.layout.recyclerview_week, parent, false);
         return new WeekListAdapter.WeekViewHolder(itemView);
     }
 
@@ -66,6 +66,8 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
     public void onBindViewHolder(@NonNull WeekListAdapter.WeekViewHolder holder, final int position) {
         if (mWeekMap != null) {
             final List<Day> current = mWeekMap.get(mWeekYears.get(position));
+            if (current == null)
+                return;
             Date sat = getSatOfWeek(current.get(0));
             Date fri = getFriOfWeek(current.get(0));
 

@@ -47,19 +47,19 @@ public class DayFragment extends Fragment {
 
     private Day oldDay;
 
-    final Calendar myCalendar = Calendar.getInstance();
-    DatePickerDialog.OnDateSetListener dateListener;
-    NewDayListener mListener;
+    private final Calendar myCalendar = Calendar.getInstance();
+    private DatePickerDialog.OnDateSetListener dateListener;
+    private NewDayListener mListener;
 
     public interface NewDayListener {
-        public void onDaySet(Day day, boolean isEditing);
-        public void onButtonClick(View v);
+        void onDaySet(Day day, boolean isEditing);
+        void onButtonClick(View v);
     }
 
-    public static DayFragment newInstance() {
+    static DayFragment newInstance() {
         return new DayFragment();
     }
-    public static DayFragment newInstance(Day day) {
+    static DayFragment newInstance(Day day) {
         Bundle args = new Bundle();
         args.putParcelable("day", day);
         DayFragment fragment = new DayFragment();
@@ -105,13 +105,16 @@ public class DayFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof WorkLogFragment.WorkLogFragmentListener) {
-            mListener = (DayFragment.NewDayListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement NewDayListener");
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception.
+        try {
+            mListener = (NewDayListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
         }
     }
 
@@ -139,6 +142,8 @@ public class DayFragment extends Fragment {
         dateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getContext() == null)
+                    return;
                 new DatePickerDialog(getContext(), dateListener,
                         myCalendar.get(Calendar.YEAR),
                         myCalendar.get(Calendar.MONTH),
@@ -152,7 +157,9 @@ public class DayFragment extends Fragment {
         dateText.setText(Utils.SHORT_SDF.format(myCalendar.getTime()));
     }
 
-    public void onButtonClick(View v) {
+    void onButtonClick(View v) {
+        if (getContext() == null)
+            return;
         InputMethodManager imm = (InputMethodManager) getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -198,6 +205,8 @@ public class DayFragment extends Fragment {
                 day = new Day(date, start, end, isNSDay);
             }
             mListener.onDaySet(day, oldDay != null);
+            if (getActivity() == null)
+                return;
             getActivity().getSupportFragmentManager().popBackStack();
         }
     }

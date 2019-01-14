@@ -18,15 +18,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -41,9 +39,6 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class WeekFragment extends Fragment {
 
-    private DayViewModel mDayViewModel;
-    private TextView totalStraightHours;
-
     public WeekFragment() {
         // Required empty public constructor
     }
@@ -54,24 +49,23 @@ public class WeekFragment extends Fragment {
      *
      * @return A new instance of fragment WeekFragment.
      */
-    public static WeekFragment newInstance() {
+    static WeekFragment newInstance() {
         return new WeekFragment();
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.content_week, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.week_recycler_view);
-
         final WeekListAdapter adapter = new WeekListAdapter(view.getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
+        DayViewModel mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
@@ -94,28 +88,5 @@ public class WeekFragment extends Fragment {
         });
 
         return view;
-    }
-
-    private int calcWeek(Day day) {
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(Calendar.SATURDAY);
-        cal.setTime(day.getDate());
-        return cal.get(Calendar.WEEK_OF_YEAR);
-    }
-
-    private Date getSatOfWeek(Day day) {
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(Calendar.SATURDAY);
-        cal.setTime(day.getDate());
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-        return cal.getTime();
-    }
-
-    private Date getFriOfWeek(Day day) {
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(Calendar.SATURDAY);
-        cal.setTime(day.getDate());
-        cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
-        return cal.getTime();
     }
 }
