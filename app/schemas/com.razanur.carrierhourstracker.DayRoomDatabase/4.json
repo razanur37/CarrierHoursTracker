@@ -1,0 +1,88 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 4,
+    "identityHash": "53a7da9dd0a76634f64aecdcc9618afb",
+    "entities": [
+      {
+        "tableName": "day_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rowID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `mStartTime` REAL NOT NULL, `mEndTime` REAL NOT NULL, `mNsDay` INTEGER NOT NULL, `mExcluded` INTEGER NOT NULL, `mHoursWorked` REAL NOT NULL, `mStraightTime` REAL NOT NULL, `mOvertime` REAL NOT NULL, `mPenalty` REAL NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "rowID",
+            "columnName": "rowID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mDate",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mStartTime",
+            "columnName": "mStartTime",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mEndTime",
+            "columnName": "mEndTime",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mNsDay",
+            "columnName": "mNsDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mExcluded",
+            "columnName": "mExcluded",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mHoursWorked",
+            "columnName": "mHoursWorked",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mStraightTime",
+            "columnName": "mStraightTime",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mOvertime",
+            "columnName": "mOvertime",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mPenalty",
+            "columnName": "mPenalty",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "rowID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"53a7da9dd0a76634f64aecdcc9618afb\")"
+    ]
+  }
+}

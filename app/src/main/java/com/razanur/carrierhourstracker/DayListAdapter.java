@@ -14,16 +14,15 @@
 package com.razanur.carrierhourstracker;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewHolder> {
 
@@ -32,7 +31,7 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
     }
 
     public interface OnItemLongClickListener {
-        boolean onItemLongClicked(Day day);
+        void onItemLongClicked(Day day);
     }
 
     class DayViewHolder extends RecyclerView.ViewHolder {
@@ -79,8 +78,6 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             holder.mHoursWorked.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getHoursWorked()));
             holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getOvertime()));
             holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getPenalty()));
-
-            Log.d("ROWID_DEBUG", Integer.toString(current.getRowID()));
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

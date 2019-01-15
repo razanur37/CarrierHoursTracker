@@ -28,4 +28,6 @@
     <string name="penalty_colon">Penalty:</string>
     <string name="empty_not_saved">Entry Cancelled</string>
     <string name="action_clear">Clear Entries</string>
+    <string name="week_view">Week View</string>
+    <string name="straight">Straight:</string>
 </resources>

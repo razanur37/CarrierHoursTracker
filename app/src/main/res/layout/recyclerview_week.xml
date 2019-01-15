@@ -21,7 +21,7 @@
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
-        android:id="@+id/tv_item_date"
+        android:id="@+id/tv_item_week"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
@@ -30,106 +30,66 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/tv_item_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/start_colon"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
-
-    <TextView
-        android:id="@+id/tv_item_start_time"
+        android:id="@+id/tv_week_straight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_start"
-        app:layout_constraintStart_toEndOf="@+id/tv_item_start" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_week_straight_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_week_straight_label" />
 
     <TextView
-        android:id="@+id/tv_item_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/end_colon"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_item_end_time"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_date" />
-
-    <TextView
-        android:id="@+id/tv_item_end_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_end"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_item_hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_hours_label"
-        app:layout_constraintStart_toEndOf="@+id/tv_item_hours_label" />
-
-    <TextView
-        android:id="@+id/tv_item_hours_label"
+        android:id="@+id/tv_week_straight_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="@string/hours_colon"
+        android:text="@string/straight"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_week" />
 
     <TextView
-        android:id="@+id/tv_item_overtime_label"
+        android:id="@+id/tv_week_overtime_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:text="@string/overtime_colon"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_item_overtime"
+        app:layout_constraintEnd_toStartOf="@+id/tv_week_overtime"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/tv_item_hours"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />
+        app:layout_constraintStart_toEndOf="@+id/tv_week_straight"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_week" />
 
     <TextView
-        android:id="@+id/tv_item_overtime"
+        android:id="@+id/tv_week_overtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_overtime_label"
-        app:layout_constraintEnd_toStartOf="@+id/tv_item_penalty_label"
-        app:layout_constraintStart_toEndOf="@+id/tv_item_overtime_label" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_week_overtime_label"
+        app:layout_constraintEnd_toStartOf="@+id/tv_week_penalty_label"
+        app:layout_constraintStart_toEndOf="@+id/tv_week_overtime_label" />
 
     <TextView
-        android:id="@+id/tv_item_penalty_label"
+        android:id="@+id/tv_week_penalty_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/penalty_colon"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_item_penalty"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_start" />
+        app:layout_constraintEnd_toStartOf="@+id/tv_week_penalty"
+        app:layout_constraintTop_toBottomOf="@+id/tv_item_week" />
 
     <TextView
-        android:id="@+id/tv_item_penalty"
+        android:id="@+id/tv_week_penalty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_item_penalty_label"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tv_week_penalty_label"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <View
@@ -137,6 +97,6 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/divider"
-        app:layout_constraintTop_toBottomOf="@+id/tv_item_overtime_label" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_week_overtime_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

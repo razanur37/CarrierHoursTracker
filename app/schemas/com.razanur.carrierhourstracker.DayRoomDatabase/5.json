@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 5,
+    "identityHash": "42e5ae01c74ef9fdd34fa0c1756d608d",
+    "entities": [
+      {
+        "tableName": "day_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rowID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER NOT NULL, `mStartTime` REAL NOT NULL, `mEndTime` REAL NOT NULL, `mNsDay` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "rowID",
+            "columnName": "rowID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mDate",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mStartTime",
+            "columnName": "mStartTime",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mEndTime",
+            "columnName": "mEndTime",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mNsDay",
+            "columnName": "mNsDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "rowID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"42e5ae01c74ef9fdd34fa0c1756d608d\")"
+    ]
+  }
+}

@@ -19,26 +19,25 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 public class DeleteDialogFragment extends DialogFragment {
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
     public interface DeleteDialogListener {
-        void onDialogPositiveClick(DialogFragment dialog, long id);
         void onDialogPositiveClick(DialogFragment dialog, Day day);
         void onDialogNegativeClick(DialogFragment dialog);
     }
 
     // Use this instance of the interface to deliver action events
-    DeleteDialogListener mListener;
+    private DeleteDialogListener mListener;
 
     // Override the Fragment.onAttach() method to instantiate the DeleteDialogListener
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         // Verify that the host activity implements the callback interface
         try {
@@ -55,60 +54,42 @@ public class DeleteDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Build the dialog and set up the button click handlers
-        Bundle bundle = getArguments();
+        Bundle bundle;
+        if (getArguments() != null)
+            bundle = getArguments();
+        else
+            bundle = new Bundle();
 
-        final long code = bundle.getLong("id");
         final Day day = bundle.getParcelable("day");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         String message;
-        if (day == null) {
+        if (day == null)
             message = "Delete All Entries?";
-            builder.setMessage(message)
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Send the positive button event back to the host activity
-                            mListener.onDialogPositiveClick(DeleteDialogFragment.this, code);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Send the negative button event back to the host activity
-                            mListener.onDialogNegativeClick(DeleteDialogFragment.this);
-                        }
-                    });
-        }
-        else {
+        else
             message = "Delete Entry?";
-            builder.setMessage(message)
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Send the positive button event back to the host activity
-                            mListener.onDialogPositiveClick(DeleteDialogFragment.this, day);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Send the negative button event back to the host activity
-                            mListener.onDialogNegativeClick(DeleteDialogFragment.this);
-                        }
-                    });
-        }
+
+        builder.setMessage(message)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Send the positive button event back to the host activity
+                        mListener.onDialogPositiveClick(DeleteDialogFragment.this, day);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Send the negative button event back to the host activity
+                        mListener.onDialogNegativeClick(DeleteDialogFragment.this);
+                    }
+                });
 
         return builder.create();
     }
 
-    public static DeleteDialogFragment newInstance(Long id) {
-        DeleteDialogFragment fragment = new DeleteDialogFragment();
-
-        Bundle bundle = new Bundle();
-        bundle.putLong("id", id);
-
-        fragment.setArguments(bundle);
-
-        return fragment;
+    static DeleteDialogFragment newInstance() {
+        return new DeleteDialogFragment();
     }
 
-    public static DeleteDialogFragment newInstance(Day day) {
+    static DeleteDialogFragment newInstance(Day day) {
         DeleteDialogFragment fragment = new DeleteDialogFragment();
 
         Bundle bundle = new Bundle();

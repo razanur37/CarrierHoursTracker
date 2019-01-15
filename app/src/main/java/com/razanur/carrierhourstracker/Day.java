@@ -13,21 +13,22 @@
  */
 package com.razanur.carrierhourstracker;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 
 @Entity(tableName = "day_table")
-public class Day implements Parcelable {
+public class Day implements Parcelable, Comparable {
 
     @PrimaryKey(autoGenerate = true)
     private int rowID;
@@ -38,12 +39,20 @@ public class Day implements Parcelable {
     private double mStartTime;
     private double mEndTime;
     private boolean mNsDay;
+    @Ignore
     private boolean mExcluded;
+    @Ignore
     private double mHoursWorked;
+    @Ignore
     private double mStraightTime;
+    @Ignore
     private double mOvertime;
+    @Ignore
     private double mPenalty;
+    @Ignore
+    private String mWeekYear;
 
+    @Ignore
     public Day(@NonNull Date date, double startTime, double endTime, boolean nsDay) {
         mDate = date;
         mStartTime = startTime;
@@ -56,6 +65,22 @@ public class Day implements Parcelable {
         mStraightTime = calcStraightTime();
         mOvertime = calcOvertime();
         mPenalty = calcPenalty();
+        mWeekYear = calcWeekYear();
+    }
+
+    // Used by Room
+    public Day(int rowID, @NonNull Date mDate, double mStartTime, double mEndTime, boolean mNsDay) {
+        this.rowID = rowID;
+        this.mDate = mDate;
+        this.mStartTime = mStartTime;
+        this.mEndTime = mEndTime;
+        this.mNsDay = mNsDay;
+        this.mExcluded = determineIfExcluded(mDate);
+        this.mHoursWorked = calcHoursWorked();
+        this.mStraightTime = calcStraightTime();
+        this.mOvertime = calcOvertime();
+        this.mPenalty = calcPenalty();
+        this.mWeekYear = calcWeekYear();
     }
 
     public Day(@NonNull Day day, @NonNull Date date, double startTime, double endTime, boolean nsDay) {
@@ -69,6 +94,21 @@ public class Day implements Parcelable {
         mStraightTime = calcStraightTime();
         mOvertime = calcOvertime();
         mPenalty = calcPenalty();
+        mWeekYear = calcWeekYear();
+    }
+
+    public Day(Day day) {
+        rowID = day.getRowID();
+        mDate = day.getDate();
+        mStartTime = day.getStartTime();
+        mEndTime = day.getEndTime();
+        mNsDay = day.isNsDay();
+        mExcluded = day.isExcluded();
+        mHoursWorked = day.getHoursWorked();
+        mStraightTime = day.getStraightTime();
+        mOvertime = day.getOvertime();
+        mPenalty = day.getPenalty();
+        mWeekYear = day.getWeekYear();
     }
 
     private Day(@NonNull Date date) {
@@ -86,6 +126,7 @@ public class Day implements Parcelable {
         mStraightTime = in.readDouble();
         mOvertime = in.readDouble();
         mPenalty = in.readDouble();
+        mWeekYear = in.readString();
     }
 
     @Override
@@ -105,6 +146,7 @@ public class Day implements Parcelable {
         dest.writeDouble(mStraightTime);
         dest.writeDouble(mOvertime);
         dest.writeDouble(mPenalty);
+        dest.writeString(mWeekYear);
     }
 
     @Ignore
@@ -117,6 +159,13 @@ public class Day implements Parcelable {
             return new Day[size];
         }
     };
+
+    @Override
+    public int compareTo(Object o) {
+        Day day = (Day) o;
+
+        return mDate.compareTo(day.getDate());
+    }
 
     static Day dateAsDay(Date date) {
         return new Day(date);
@@ -138,11 +187,20 @@ public class Day implements Parcelable {
     @Override
     public int hashCode() {
         int prime = 37;
-        int result = 1;
+        int result = 33;
 
-        result = prime * result +  mDate.hashCode();
+        result = prime * result + mDate.hashCode();
 
         return result;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Worked " + Utils.LONG_SDF.format(mDate) +
+                ", from " + String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, mStartTime) +
+                " to " + String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, mEndTime) +
+                '.';
     }
 
     private double calcHoursWorked() {
@@ -168,14 +226,14 @@ public class Day implements Parcelable {
     }
 
     private double calcOvertime() {
-        if (!mNsDay) {
-            if (!mExcluded)
+        if (!mExcluded) {
+            if (!mNsDay)
                 return Math.min(mHoursWorked - mStraightTime, 2.0);
             else
-                return mHoursWorked-mStraightTime;
+                return Math.min(mHoursWorked, 8.0);
         }
-        else
-           return Math.min(mHoursWorked, 8.0);
+
+        return mHoursWorked-mStraightTime;
     }
 
     private double calcPenalty() {
@@ -245,16 +303,32 @@ public class Day implements Parcelable {
         return false;
     }
 
-    public int getRowID() {
-        return rowID;
+    private String calcWeekYear() {
+        Calendar cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.SATURDAY);
+        cal.setTime(mDate);
+        String weekYear = Integer.toString(cal.get(Calendar.WEEK_OF_YEAR)) + "-";
+        weekYear = weekYear.concat(Integer.toString(cal.get(Calendar.YEAR)));
+        return weekYear;
     }
 
-    public void setRowID(int id) {
-        rowID = id;
+    int getRowID() {
+        return rowID;
     }
 
     public Date getDate() {
         return mDate;
+    }
+
+    public void setDate(Date date) {
+        mDate = date;
+        boolean excluded = determineIfExcluded(date);
+        if (mExcluded != excluded) {
+            mExcluded = excluded;
+            mStraightTime = calcStraightTime();
+            mOvertime = calcOvertime();
+            mPenalty = calcPenalty();
+        }
     }
 
     boolean isNsDay() {
@@ -273,39 +347,23 @@ public class Day implements Parcelable {
         return mExcluded;
     }
 
-    void setExcluded(boolean excluded) {
-        mExcluded = excluded;
-    }
-
     double getHoursWorked() {
         return mHoursWorked;
-    }
-
-    void setHoursWorked(double hoursWorked) {
-        mHoursWorked = hoursWorked;
     }
 
     double getStraightTime() {
         return mStraightTime;
     }
 
-    void setStraightTime(double straightTime) {
-        mStraightTime = straightTime;
-    }
-
     double getOvertime() {
         return mOvertime;
-    }
-
-    void setOvertime(double overtime) {
-        mOvertime = overtime;
     }
 
     double getPenalty() {
         return mPenalty;
     }
 
-    void setPenalty(double penalty) {
-        mPenalty = penalty;
+    String getWeekYear() {
+        return mWeekYear;
     }
 }
