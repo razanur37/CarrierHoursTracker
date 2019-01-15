@@ -307,8 +307,8 @@ public class Day implements Parcelable, Comparable {
         Calendar cal = Calendar.getInstance();
         cal.setFirstDayOfWeek(Calendar.SATURDAY);
         cal.setTime(mDate);
-        String weekYear = Integer.toString(cal.get(Calendar.WEEK_OF_YEAR)) + "-";
-        weekYear = weekYear.concat(Integer.toString(cal.get(Calendar.YEAR)));
+        String weekYear = Integer.toString(cal.get(Calendar.YEAR)) + "-";
+        weekYear = weekYear.concat(String.format(Utils.LOCALE, "%02d", cal.get(Calendar.WEEK_OF_YEAR)));
         return weekYear;
     }
 
