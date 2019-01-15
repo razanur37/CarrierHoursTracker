@@ -13,6 +13,7 @@
  */
 package com.razanur.carrierhourstracker;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,37 +45,44 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getResources().getBoolean(R.bool.isTablet))
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+
         setContentView(R.layout.activity_main);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dayFragment = DayFragment.newInstance();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
-                        .addToBackStack(null)
+        if (findViewById(R.id.container) != null) {
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dayFragment = DayFragment.newInstance();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+
+            String activeFragment = DayViewModel.getActiveFragment();
+
+            if (activeFragment == null)
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, WorkLogFragment.newInstance(), WORK_LOG_FRAGMENT_TAG)
+                        .commit();
+            else {
+                Fragment fragment = fragmentManager.findFragmentByTag(activeFragment);
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, fragment, activeFragment)
                         .commit();
             }
-        });
-
-        String activeFragment = DayViewModel.getActiveFragment();
-
-        if (activeFragment == null)
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, WorkLogFragment.newInstance(), WORK_LOG_FRAGMENT_TAG)
-                    .commit();
-        else {
-            Fragment fragment = fragmentManager.findFragmentByTag(activeFragment);
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, fragment, activeFragment)
-                    .commit();
         }
     }
 
@@ -82,6 +90,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        /*if (findViewById(R.id.container) == null)
+            findViewById(R.id.action_week_view).setVisibility(View.INVISIBLE);*/
         return true;
     }
 
@@ -121,16 +131,28 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onButtonClick(View v) {
-        dayFragment.onButtonClick(v);
+
+        if (dayFragment == null) {
+            dayFragment = (DayFragment) fragmentManager.findFragmentById(R.id.day_fragment);
+            dayFragment.onButtonClick(v);
+        } else {
+            dayFragment.onButtonClick(v);
+        }
     }
 
     @Override
     public void onItemClicked(Day day) {
-        dayFragment = DayFragment.newInstance(day);
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
-                .addToBackStack(null)
-                .commit();
+        dayFragment = (DayFragment) fragmentManager.findFragmentById(R.id.day_fragment);
+
+        if (dayFragment != null) {
+            dayFragment.updateDayView(day);
+        } else {
+            dayFragment = DayFragment.newInstance(day);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override

@@ -46,6 +46,7 @@ public class DayFragment extends Fragment {
     private EditText dateText;
     private RadioGroup nsDayGroup;
     private List<Day> mDays;
+    private Button button;
 
     private Day oldDay;
 
@@ -84,16 +85,10 @@ public class DayFragment extends Fragment {
         endTime = view.findViewById(R.id.et_end_time);
         dateText = view.findViewById(R.id.et_date);
         nsDayGroup = view.findViewById(R.id.ns_day_group);
+        button = view.findViewById(R.id.button_submit);
 
         if (oldDay != null) {
-            startTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, oldDay.getStartTime()));
-            endTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, oldDay.getEndTime()));
-            if (oldDay.isNsDay())
-                nsDayGroup.check(R.id.rb_ns_yes);
-            Date date = oldDay.getDate();
-            dateText.setText(Utils.SHORT_SDF.format(date));
-            Button button = view.findViewById(R.id.button_submit);
-            button.setText(R.string.update);
+            updateDayView(oldDay);
         }
 
         DayViewModel mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
@@ -163,6 +158,17 @@ public class DayFragment extends Fragment {
                         .show();
             }
         });
+    }
+
+    void updateDayView(Day day) {
+        oldDay = day;
+        startTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, day.getStartTime()));
+        endTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, day.getEndTime()));
+        if (day.isNsDay())
+            nsDayGroup.check(R.id.rb_ns_yes);
+        Date date = day.getDate();
+        dateText.setText(Utils.SHORT_SDF.format(date));
+        button.setText(R.string.update);
     }
 
     private void updateLabel() {
