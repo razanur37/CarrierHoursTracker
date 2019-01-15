@@ -39,6 +39,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 public class DayFragment extends Fragment {
 
+    static final String TAG = "DAY_FRAGMENT";
+
     private EditText startTime;
     private EditText endTime;
     private EditText dateText;
@@ -54,6 +56,10 @@ public class DayFragment extends Fragment {
     public interface NewDayListener {
         void onDaySet(Day day, boolean isEditing);
         void onButtonClick(View v);
+    }
+
+    public DayFragment() {
+        // Required empty constructor
     }
 
     static DayFragment newInstance() {
@@ -102,6 +108,12 @@ public class DayFragment extends Fragment {
         createDateDialog();
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        DayViewModel.setActiveFragment(TAG);
     }
 
     @Override

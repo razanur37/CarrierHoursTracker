@@ -25,7 +25,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 public class MainActivity extends AppCompatActivity
@@ -34,8 +33,13 @@ public class MainActivity extends AppCompatActivity
         DayFragment.NewDayListener,
         DeleteDialogFragment.DeleteDialogListener {
 
+    final String WORK_LOG_FRAGMENT_TAG =  WorkLogFragment.TAG;
+    final String DAY_FRAGMENT_TAG = DayFragment.TAG;
+    final String WEEK_FRAGMENT_TAG = WeekFragment.TAG;
+
     private DayViewModel mDayViewModel;
-    private DayFragment newDayFragment;
+    private DayFragment dayFragment;
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +54,28 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                newDayFragment = DayFragment.newInstance();
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, newDayFragment)
+                dayFragment = DayFragment.newInstance();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
                         .addToBackStack(null)
                         .commit();
             }
         });
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, WorkLogFragment.newInstance())
-                .commitNow();
+        String activeFragment = DayViewModel.getActiveFragment();
+
+        if (activeFragment == null)
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container, WorkLogFragment.newInstance(), WORK_LOG_FRAGMENT_TAG)
+                    .commit();
+        else {
+            Fragment fragment = fragmentManager.findFragmentByTag(activeFragment);
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container, fragment, activeFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -84,12 +99,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (id == R.id.action_week_view) {
-            Fragment weekView = WeekFragment.newInstance();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container, weekView);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container, WeekFragment.newInstance(), WEEK_FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit();
             return true;
         }
 
@@ -107,14 +121,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onButtonClick(View v) {
-        newDayFragment.onButtonClick(v);
+        dayFragment.onButtonClick(v);
     }
 
     @Override
     public void onItemClicked(Day day) {
-        newDayFragment = DayFragment.newInstance(day);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, newDayFragment)
+        dayFragment = DayFragment.newInstance(day);
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
                 .addToBackStack(null)
                 .commit();
     }
@@ -126,13 +140,13 @@ public class MainActivity extends AppCompatActivity
 
     public void showDeleteDialog() {
         DialogFragment dialog = DeleteDialogFragment.newInstance();
-        dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
+        dialog.show(fragmentManager, "DeleteDialogFragment");
     }
 
     public void showDeleteDialog(Day day) {
         // Create an instance of the dialog fragment and show it
         DialogFragment dialog = DeleteDialogFragment.newInstance(day);
-        dialog.show(getSupportFragmentManager(), "DeleteDialogFragment");
+        dialog.show(fragmentManager, "DeleteDialogFragment");
     }
 
     @Override

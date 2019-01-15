@@ -39,6 +39,8 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class WeekFragment extends Fragment {
 
+    static final String TAG = "WEEK_FRAGMENT";
+
     public WeekFragment() {
         // Required empty public constructor
     }
@@ -88,5 +90,11 @@ public class WeekFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        DayViewModel.setActiveFragment(TAG);
     }
 }

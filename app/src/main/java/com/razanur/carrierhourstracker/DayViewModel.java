@@ -24,11 +24,20 @@ public class DayViewModel extends AndroidViewModel {
 
     private DayRepository mRepository;
     private LiveData<List<Day>> mAllDays;
+    static private String mActiveFragment;
 
     public DayViewModel(Application application) {
         super(application);
         mRepository = new DayRepository(application);
         mAllDays = mRepository.getAllDays();
+    }
+
+    static void setActiveFragment(String activeFragment) {
+        mActiveFragment = activeFragment;
+    }
+
+    static String getActiveFragment() {
+        return mActiveFragment;
     }
 
     LiveData<List<Day>> getAllDays() {

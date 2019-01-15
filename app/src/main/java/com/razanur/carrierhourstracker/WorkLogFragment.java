@@ -31,6 +31,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class WorkLogFragment extends Fragment {
 
+    static final String TAG = "WORK_LOG_FRAGMENT";
+
+    public WorkLogFragment() {
+        // Required empty constructor
+    }
+
     static WorkLogFragment newInstance() {
         return new WorkLogFragment();
     }
@@ -57,4 +63,9 @@ public class WorkLogFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        DayViewModel.setActiveFragment(TAG);
+    }
 }
