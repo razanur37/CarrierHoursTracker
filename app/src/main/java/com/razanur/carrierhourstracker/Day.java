@@ -205,7 +205,7 @@ public class Day implements Parcelable, Comparable {
 
     private double calcHoursWorked() {
         double hoursWorked = determineLunch(mEndTime - mStartTime);
-        if (!mNsDay && 7.92 <= hoursWorked && hoursWorked <= 8.08)
+        if (MainActivity.isRoundingEnabled && !mNsDay && 7.92 <= hoursWorked && hoursWorked <= 8.08)
             return 8.0;
         else
             return hoursWorked;
@@ -307,13 +307,17 @@ public class Day implements Parcelable, Comparable {
         Calendar cal = Calendar.getInstance();
         cal.setFirstDayOfWeek(Calendar.SATURDAY);
         cal.setTime(mDate);
-        String weekYear = Integer.toString(cal.get(Calendar.WEEK_OF_YEAR)) + "-";
-        weekYear = weekYear.concat(Integer.toString(cal.get(Calendar.YEAR)));
+        String weekYear = Integer.toString(cal.get(Calendar.YEAR)) + "-";
+        weekYear = weekYear.concat(String.format(Utils.LOCALE, "%02d", cal.get(Calendar.WEEK_OF_YEAR)));
         return weekYear;
     }
 
     int getRowID() {
         return rowID;
+    }
+
+    void setRowID(int id) {
+        rowID = id;
     }
 
     public Date getDate() {

@@ -44,6 +44,10 @@ public class DayViewModel extends AndroidViewModel {
         return mAllDays;
     }
 
+    void refresh() {
+        mRepository.refresh();
+    }
+
     void insert(Day day) {
         mRepository.insert(day);
     }

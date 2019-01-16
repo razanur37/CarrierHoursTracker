@@ -13,25 +13,32 @@
  */
 package com.razanur.carrierhourstracker;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.razanur.carrierhourstracker.settings.SettingsActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity
         implements DayListAdapter.OnItemClickListener,
         DayListAdapter.OnItemLongClickListener,
         DayFragment.NewDayListener,
-        DeleteDialogFragment.DeleteDialogListener {
+        DeleteDialogFragment.DeleteDialogListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     final String WORK_LOG_FRAGMENT_TAG =  WorkLogFragment.TAG;
     final String DAY_FRAGMENT_TAG = DayFragment.TAG;
@@ -41,47 +48,74 @@ public class MainActivity extends AppCompatActivity
     private DayFragment dayFragment;
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
+    static boolean isRoundingEnabled;
+    String activeFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getResources().getBoolean(R.bool.isTablet))
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+
         setContentView(R.layout.activity_main);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dayFragment = DayFragment.newInstance();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
-                        .addToBackStack(null)
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        isRoundingEnabled = sharedPreferences.getBoolean("rounding", true);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (findViewById(R.id.container) != null) {
+
+            FloatingActionButton fab = findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dayFragment = DayFragment.newInstance();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+
+            if (activeFragment == null)
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, WorkLogFragment.newInstance(), WORK_LOG_FRAGMENT_TAG)
+                        .commit();
+            else {
+                Fragment fragment = fragmentManager.findFragmentByTag(activeFragment);
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, fragment, activeFragment)
                         .commit();
             }
-        });
-
-        String activeFragment = DayViewModel.getActiveFragment();
-
-        if (activeFragment == null)
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, WorkLogFragment.newInstance(), WORK_LOG_FRAGMENT_TAG)
-                    .commit();
-        else {
-            Fragment fragment = fragmentManager.findFragmentByTag(activeFragment);
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, fragment, activeFragment)
-                    .commit();
         }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        activeFragment = DayViewModel.getActiveFragment();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        /*if (findViewById(R.id.container) == null)
+            findViewById(R.id.action_week_view).setVisibility(View.INVISIBLE);*/
         return true;
     }
 
@@ -91,6 +125,11 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if (id == R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_clear) {
@@ -104,6 +143,11 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.container, WeekFragment.newInstance(), WEEK_FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
+            return true;
+        }
+
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -121,16 +165,28 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onButtonClick(View v) {
-        dayFragment.onButtonClick(v);
+
+        if (dayFragment == null) {
+            dayFragment = (DayFragment) fragmentManager.findFragmentById(R.id.day_fragment);
+            dayFragment.onButtonClick(v);
+        } else {
+            dayFragment.onButtonClick(v);
+        }
     }
 
     @Override
     public void onItemClicked(Day day) {
-        dayFragment = DayFragment.newInstance(day);
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
-                .addToBackStack(null)
-                .commit();
+        dayFragment = (DayFragment) fragmentManager.findFragmentById(R.id.day_fragment);
+
+        if (dayFragment != null) {
+            dayFragment.updateDayView(day);
+        } else {
+            dayFragment = DayFragment.newInstance(day);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, dayFragment, DAY_FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override
@@ -160,5 +216,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // Do nothing
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+        if (key.equals("rounding")) {
+            isRoundingEnabled = preferences.getBoolean(key, true);
+            mDayViewModel.refresh();
+        }
     }
 }
