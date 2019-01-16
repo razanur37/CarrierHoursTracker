@@ -13,13 +13,23 @@
   ~ limitations under the License.
   -->
 
-<androidx.preference.PreferenceScreen
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreferenceCompat
         app:key="rounding"
         app:title="Enable rounding for hours worked"
         app:summary="Round straight-time hours worked within 0.08 clicks of 8 hours to 8.00"
-        app:defaultValue="true"/>
+        app:defaultValue="true" />
+
+    <Preference
+        app:key="feedback"
+        app:title="Send feedback"
+        app:summary="Report technical issues or suggest new features">
+        <intent
+            android:action="android.intent.action.SENDTO"
+            android:data="mailto:razanur37@gmail.com?subject=Carrier Hours Tracker Feedback">
+        </intent>
+    </Preference>
 
 </androidx.preference.PreferenceScreen>
