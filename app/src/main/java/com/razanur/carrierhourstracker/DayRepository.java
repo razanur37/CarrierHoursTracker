@@ -16,6 +16,7 @@ package com.razanur.carrierhourstracker;
 import android.app.Application;
 import android.os.AsyncTask;
 
+import java.util.Date;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -29,6 +30,11 @@ class DayRepository {
         DayRoomDatabase db = DayRoomDatabase.getDatabase(application);
         mDayDao = db.dayDao();
         mAllDays = mDayDao.getAllDays();
+    }
+
+    void refresh() {
+        Day day = Day.dateAsDay(new Date(0));
+        new refreshAsyncTask(mDayDao).execute(day);
     }
 
     LiveData<List<Day>> getAllDays() {
@@ -109,4 +115,24 @@ class DayRepository {
         }
     }
 
+    private static class refreshAsyncTask extends AsyncTask<Day, Void, Day> {
+
+        private DayDao mAsyncTaskDao;
+        refreshAsyncTask(DayDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Day doInBackground(Day... params) {
+            Day day = params[0];
+            day.setRowID(-1);
+            mAsyncTaskDao.insert(day);
+            return day;
+        }
+
+        @Override
+        protected void onPostExecute(Day day) {
+            new deleteSingleAsyncTask(mAsyncTaskDao).execute(day);
+        }
+    }
 }

@@ -33,6 +33,9 @@ public class WorkLogFragment extends Fragment {
 
     static final String TAG = "WORK_LOG_FRAGMENT";
 
+    private DayListAdapter adapter;
+    private DayViewModel mDayViewModel;
+
     public WorkLogFragment() {
         // Required empty constructor
     }
@@ -47,20 +50,24 @@ public class WorkLogFragment extends Fragment {
         View view = inflater.inflate(R.layout.content_main, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.date_recycler_view);
-        final DayListAdapter adapter = new DayListAdapter(view.getContext());
+        adapter = new DayListAdapter(view.getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        DayViewModel mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
+        mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
             public void onChanged(@Nullable List<Day> days) {
                 adapter.setDays(days);
             }
         });
-
-        return view;
     }
 
     @Override

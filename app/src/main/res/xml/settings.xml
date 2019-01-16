@@ -13,18 +13,13 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.razanur.carrierhourstracker.MainActivity">
-    <item
-        android:id="@+id/action_clear"
-        android:orderInCategory="100"
-        android:title="@string/action_clear"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="200"
-        android:title="@string/settings"
-        app:showAsAction="never" />
-</menu>
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="rounding"
+        app:title="Enable rounding for hours worked"
+        app:summary="Round straight-time hours worked within 0.08 clicks of 8 hours to 8.00"
+        app:defaultValue="true"/>
+
+</androidx.preference.PreferenceScreen>
