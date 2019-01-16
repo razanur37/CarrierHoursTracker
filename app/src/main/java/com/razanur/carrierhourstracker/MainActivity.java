@@ -13,6 +13,8 @@
  */
 package com.razanur.carrierhourstracker;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,19 +22,23 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.razanur.carrierhourstracker.settings.SettingsActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NavUtils;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity
         implements DayListAdapter.OnItemClickListener,
         DayListAdapter.OnItemLongClickListener,
         DayFragment.NewDayListener,
-        DeleteDialogFragment.DeleteDialogListener {
+        DeleteDialogFragment.DeleteDialogListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     final String WORK_LOG_FRAGMENT_TAG =  WorkLogFragment.TAG;
     final String DAY_FRAGMENT_TAG = DayFragment.TAG;
@@ -41,6 +47,9 @@ public class MainActivity extends AppCompatActivity
     private DayViewModel mDayViewModel;
     private DayFragment dayFragment;
     private FragmentManager fragmentManager = getSupportFragmentManager();
+
+    static boolean isRoundingEnabled;
+    String activeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +64,16 @@ public class MainActivity extends AppCompatActivity
 
         mDayViewModel = ViewModelProviders.of(this).get(DayViewModel.class);
 
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        isRoundingEnabled = sharedPreferences.getBoolean("rounding", true);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if (findViewById(R.id.container) != null) {
 
             FloatingActionButton fab = findViewById(R.id.fab);
@@ -69,8 +88,6 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-            String activeFragment = DayViewModel.getActiveFragment();
-
             if (activeFragment == null)
                 fragmentManager
                         .beginTransaction()
@@ -84,6 +101,13 @@ public class MainActivity extends AppCompatActivity
                         .commit();
             }
         }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        activeFragment = DayViewModel.getActiveFragment();
     }
 
     @Override
@@ -102,6 +126,11 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (id == R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        }
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_clear) {
             showDeleteDialog();
@@ -114,6 +143,11 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.container, WeekFragment.newInstance(), WEEK_FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
+            return true;
+        }
+
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -182,5 +216,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // Do nothing
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
+        if (key.equals("rounding")) {
+            isRoundingEnabled = preferences.getBoolean(key, true);
+            mDayViewModel.refresh();
+        }
     }
 }
