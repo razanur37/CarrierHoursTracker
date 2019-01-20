@@ -36,6 +36,6 @@ public interface DayDao {
     @Query("DELETE FROM day_table")
     void deleteAll();
 
-    @Query("SELECT * from day_table ORDER BY date ASC")
+    @Query("SELECT * from day_table ORDER BY date DESC")
     LiveData<List<Day>> getAllDays();
 }
