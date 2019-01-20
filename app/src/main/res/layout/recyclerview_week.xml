@@ -25,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +35,7 @@
         android:id="@+id/tv_week_straight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
         android:textSize="18sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_week_straight_label"
         app:layout_constraintStart_toEndOf="@+id/tv_week_straight_label" />
@@ -43,10 +44,11 @@
         android:id="@+id/tv_week_straight_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/straight"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_week" />
 
@@ -55,9 +57,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="4dp"
         android:text="@string/overtime_colon"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/tv_week_overtime"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@+id/tv_week_straight"
@@ -78,9 +80,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="4dp"
         android:text="@string/penalty_colon"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/tv_week_penalty"
         app:layout_constraintTop_toBottomOf="@+id/tv_item_week" />
 
@@ -88,7 +91,7 @@
         android:id="@+id/tv_week_penalty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:textSize="18sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_week_penalty_label"
         app:layout_constraintEnd_toEndOf="parent" />
