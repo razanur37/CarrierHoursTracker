@@ -39,8 +39,6 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
         private final TextView mStartTime;
         private final TextView mEndTime;
         private final TextView mHoursWorked;
-        private final TextView mOvertime;
-        private final TextView mPenalty;
 
         DayViewHolder(View itemView) {
             super(itemView);
@@ -48,8 +46,6 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             mStartTime = itemView.findViewById(R.id.tv_item_start_time);
             mEndTime = itemView.findViewById(R.id.tv_item_end_time);
             mHoursWorked = itemView.findViewById(R.id.tv_item_hours);
-            mOvertime = itemView.findViewById(R.id.tv_item_overtime);
-            mPenalty = itemView.findViewById(R.id.tv_item_penalty);
         }
     }
 
@@ -76,8 +72,6 @@ public class DayListAdapter extends RecyclerView.Adapter<DayListAdapter.DayViewH
             holder.mStartTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getStartTime()));
             holder.mEndTime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getEndTime()));
             holder.mHoursWorked.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getHoursWorked()));
-            holder.mOvertime.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getOvertime()));
-            holder.mPenalty.setText(String.format(Utils.LOCALE, Utils.DECIMAL_FORMAT, current.getPenalty()));
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
