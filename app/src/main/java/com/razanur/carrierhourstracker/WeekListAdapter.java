@@ -110,7 +110,7 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
     void setWeeks(Map<String, List<Day>> weekMap) {
         mWeekMap = weekMap;
         TreeSet<String> weekYears = new TreeSet<>(mWeekMap.keySet());
-        mWeekYears = new ArrayList<>(weekYears);
+        mWeekYears = new ArrayList<>(weekYears.descendingSet());
         notifyDataSetChanged();
     }
 
