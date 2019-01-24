@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     final String WORK_LOG_FRAGMENT_TAG =  WorkLogFragment.TAG;
     final String DAY_FRAGMENT_TAG = DayFragment.TAG;
     final String WEEK_FRAGMENT_TAG = WeekFragment.TAG;
+    final String CONVERSION_FRAGMENT_TAG = ConversionFragment.TAG;
 
     private DayViewModel mDayViewModel;
     private DayFragment dayFragment;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity
         if (findViewById(R.id.container) != null) {
 
             FloatingActionButton fab = findViewById(R.id.fab);
+
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -126,32 +128,39 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
-        }
+        switch (id) {
+            case R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_clear) {
-            showDeleteDialog();
-            return true;
-        }
+            case R.id.action_week_view:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, WeekFragment.newInstance(), WEEK_FRAGMENT_TAG)
+                        .addToBackStack(null)
+                        .commit();
+                return true;
 
-        if (id == R.id.action_week_view) {
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, WeekFragment.newInstance(), WEEK_FRAGMENT_TAG)
-                    .addToBackStack(null)
-                    .commit();
-            return true;
-        }
+            case R.id.action_conversion:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, ConversionFragment.newInstance(), CONVERSION_FRAGMENT_TAG)
+                        .addToBackStack(null)
+                        .commit();
+                return true;
 
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
+            case R.id.action_clear:
+                showDeleteDialog();
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override

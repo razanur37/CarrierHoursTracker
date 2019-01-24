@@ -26,6 +26,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -103,6 +105,14 @@ public class DayFragment extends Fragment {
         createDateDialog();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        if (fab.getVisibility() == View.VISIBLE)
+            fab.setVisibility(View.INVISIBLE);
     }
 
     @Override

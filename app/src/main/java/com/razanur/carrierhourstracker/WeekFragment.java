@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -90,6 +92,14 @@ public class WeekFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        if (fab.getVisibility() == View.INVISIBLE)
+            fab.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -62,6 +64,11 @@ public class WorkLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
+        if (fab.getVisibility() == View.INVISIBLE)
+            fab.setVisibility(View.VISIBLE);
+
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
             public void onChanged(@Nullable List<Day> days) {
