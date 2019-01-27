@@ -49,11 +49,12 @@ public class MainActivity extends AppCompatActivity
     private DayFragment dayFragment;
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
-    static boolean isRoundingEnabled;
+    static boolean isFulltime;
     String activeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         if (getResources().getBoolean(R.bool.isTablet))
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
-        isRoundingEnabled = sharedPreferences.getBoolean("rounding", true);
+        isFulltime = sharedPreferences.getBoolean("fulltime", true);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
     }
@@ -229,8 +230,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-        if (key.equals("rounding")) {
-            isRoundingEnabled = preferences.getBoolean(key, true);
+        if (key.equals("fulltime")) {
+            isFulltime = preferences.getBoolean(key, true);
             mDayViewModel.refresh();
         }
     }

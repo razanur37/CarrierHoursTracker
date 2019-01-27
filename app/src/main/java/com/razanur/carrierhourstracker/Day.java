@@ -205,7 +205,7 @@ public class Day implements Parcelable, Comparable {
 
     private double calcHoursWorked() {
         double hoursWorked = determineLunch(mEndTime - mStartTime);
-        if (MainActivity.isRoundingEnabled && !mNsDay && 7.92 <= hoursWorked && hoursWorked <= 8.08)
+        if (MainActivity.isFulltime && !mNsDay && 7.92 <= hoursWorked && hoursWorked <= 8.08)
             return 8.0;
         else
             return hoursWorked;

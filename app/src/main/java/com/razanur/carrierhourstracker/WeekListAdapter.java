@@ -76,12 +76,22 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
             double weekStraight = 0.0;
             double weekOvertime = 0.0;
             double weekPenalty = 0.0;
+            int daysOfOt = 0;
             boolean isExcluded = current.get(0).isExcluded();
 
             for(Day day : current) {
                 double dayStraight = day.getStraightTime();
                 double dayOvertime = day.getOvertime();
                 double dayPenalty = day.getPenalty();
+
+                if (!day.isNsDay() && dayOvertime >= 0.0) {
+                    daysOfOt += 1;
+                }
+
+                if (!isExcluded && daysOfOt >= 5 && MainActivity.isFulltime) {
+                    dayPenalty += dayOvertime;
+                    dayOvertime = 0.0;
+                }
 
                 weekStraight += dayStraight;
                 if (weekStraight > 40) {

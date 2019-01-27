@@ -34,6 +34,7 @@ class DayRepository {
 
     void refresh() {
         Day day = Day.dateAsDay(new Date(0));
+        day.setRowID(-1);
         new refreshAsyncTask(mDayDao).execute(day);
     }
 
@@ -115,7 +116,7 @@ class DayRepository {
         }
     }
 
-    private static class refreshAsyncTask extends AsyncTask<Day, Void, Day> {
+    private static class refreshAsyncTask extends AsyncTask<Day, Void, Void> {
 
         private DayDao mAsyncTaskDao;
         refreshAsyncTask(DayDao dao) {
@@ -123,16 +124,13 @@ class DayRepository {
         }
 
         @Override
-        protected Day doInBackground(Day... params) {
+        protected Void doInBackground(Day... params) {
             Day day = params[0];
-            day.setRowID(-1);
             mAsyncTaskDao.insert(day);
-            return day;
+            mAsyncTaskDao.delete(day);
+            return null;
         }
 
-        @Override
-        protected void onPostExecute(Day day) {
-            new deleteSingleAsyncTask(mAsyncTaskDao).execute(day);
-        }
     }
+
 }
