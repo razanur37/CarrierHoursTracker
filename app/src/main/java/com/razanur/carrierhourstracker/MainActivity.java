@@ -57,8 +57,9 @@ public class MainActivity extends AppCompatActivity
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
-        if (getResources().getBoolean(R.bool.isTablet))
+        if (getResources().getBoolean(R.bool.isTablet)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
 
         setContentView(R.layout.activity_main);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         if (findViewById(R.id.container) != null) {
+            // This means we're on a phone
 
             FloatingActionButton fab = findViewById(R.id.fab);
 

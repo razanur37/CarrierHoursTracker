@@ -13,6 +13,7 @@
  */
 package com.razanur.carrierhourstracker;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -110,9 +111,14 @@ public class DayFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-        if (fab.getVisibility() == View.VISIBLE)
-            fab.setVisibility(View.INVISIBLE);
+
+        Activity activity = getActivity();
+
+        if (activity.findViewById(R.id.container) != null) {
+            FloatingActionButton fab = activity.findViewById(R.id.fab);
+            if (fab.getVisibility() == View.VISIBLE)
+                fab.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

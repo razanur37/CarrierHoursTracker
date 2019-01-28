@@ -14,6 +14,7 @@
 
 package com.razanur.carrierhourstracker;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,9 +66,13 @@ public class WorkLogFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-        if (fab.getVisibility() == View.INVISIBLE)
-            fab.setVisibility(View.VISIBLE);
+        Activity activity = getActivity();
+
+        if (activity.findViewById(R.id.container) != null) {
+            FloatingActionButton fab = activity.findViewById(R.id.fab);
+            if (fab.getVisibility() == View.INVISIBLE)
+                fab.setVisibility(View.VISIBLE);
+        }
 
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
