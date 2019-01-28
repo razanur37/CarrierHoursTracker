@@ -14,10 +14,13 @@
 
 package com.razanur.carrierhourstracker;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 import java.util.Map;
@@ -90,6 +93,19 @@ public class WeekFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Activity activity = getActivity();
+
+        if (activity.findViewById(R.id.container) != null) {
+            FloatingActionButton fab = activity.findViewById(R.id.fab);
+            if (fab.getVisibility() == View.INVISIBLE)
+                fab.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

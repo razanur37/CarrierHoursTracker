@@ -14,10 +14,13 @@
 
 package com.razanur.carrierhourstracker;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -62,6 +65,15 @@ public class WorkLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        Activity activity = getActivity();
+
+        if (activity.findViewById(R.id.container) != null) {
+            FloatingActionButton fab = activity.findViewById(R.id.fab);
+            if (fab.getVisibility() == View.INVISIBLE)
+                fab.setVisibility(View.VISIBLE);
+        }
+
         mDayViewModel.getAllDays().observe(this, new Observer<List<Day>>() {
             @Override
             public void onChanged(@Nullable List<Day> days) {

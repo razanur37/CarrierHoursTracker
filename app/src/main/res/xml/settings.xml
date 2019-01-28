@@ -17,9 +17,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreferenceCompat
-        app:key="rounding"
-        app:title="Enable rounding for hours worked"
-        app:summary="Round straight-time hours worked within 0.08 clicks of 8 hours to 8.00"
+        app:key="fulltime"
+        app:title="Are you a Full-Time Regular?"
+        app:summary="Enable this if you are a Full-Time Regular, disable if you are a Part-Time Flexible or City Carrier Assistant"
         app:defaultValue="true" />
 
     <Preference

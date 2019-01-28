@@ -14,6 +14,7 @@
 
 package com.razanur.carrierhourstracker.settings;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.razanur.carrierhourstracker.R;
@@ -26,6 +27,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getResources().getBoolean(R.bool.isTablet)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+
         setContentView(R.layout.settings);
         final Toolbar toolbar = findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);

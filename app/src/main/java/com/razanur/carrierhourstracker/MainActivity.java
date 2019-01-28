@@ -43,20 +43,23 @@ public class MainActivity extends AppCompatActivity
     final String WORK_LOG_FRAGMENT_TAG =  WorkLogFragment.TAG;
     final String DAY_FRAGMENT_TAG = DayFragment.TAG;
     final String WEEK_FRAGMENT_TAG = WeekFragment.TAG;
+    final String CONVERSION_FRAGMENT_TAG = ConversionFragment.TAG;
 
     private DayViewModel mDayViewModel;
     private DayFragment dayFragment;
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
-    static boolean isRoundingEnabled;
+    static boolean isFulltime;
     String activeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
-        if (getResources().getBoolean(R.bool.isTablet))
+        if (getResources().getBoolean(R.bool.isTablet)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
 
         setContentView(R.layout.activity_main);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -66,7 +69,7 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this);
-        isRoundingEnabled = sharedPreferences.getBoolean("rounding", true);
+        isFulltime = sharedPreferences.getBoolean("fulltime", true);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
     }
@@ -75,8 +78,10 @@ public class MainActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
         if (findViewById(R.id.container) != null) {
+            // This means we're on a phone
 
             FloatingActionButton fab = findViewById(R.id.fab);
+
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -126,32 +131,39 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
-        }
+        switch (id) {
+            case R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_clear) {
-            showDeleteDialog();
-            return true;
-        }
+            case R.id.action_week_view:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, WeekFragment.newInstance(), WEEK_FRAGMENT_TAG)
+                        .addToBackStack(null)
+                        .commit();
+                return true;
 
-        if (id == R.id.action_week_view) {
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, WeekFragment.newInstance(), WEEK_FRAGMENT_TAG)
-                    .addToBackStack(null)
-                    .commit();
-            return true;
-        }
+            case R.id.action_conversion:
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.container, ConversionFragment.newInstance(), CONVERSION_FRAGMENT_TAG)
+                        .addToBackStack(null)
+                        .commit();
+                return true;
 
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        }
+            case R.id.action_clear:
+                showDeleteDialog();
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override
@@ -220,8 +232,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
-        if (key.equals("rounding")) {
-            isRoundingEnabled = preferences.getBoolean(key, true);
+        if (key.equals("fulltime")) {
+            isFulltime = preferences.getBoolean(key, true);
             mDayViewModel.refresh();
         }
     }
